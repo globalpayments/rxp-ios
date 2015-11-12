@@ -50,6 +50,7 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
     var payerExists:String! = ""
     var validateCardOnly:String! = ""
     var dccEnable:String! = ""
+    var supplementaryData:Dictionary<String, String>! = [:]
     
     var delegate:HPPManagerDelegate?
     
@@ -166,6 +167,12 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         }
         if self.dccEnable != "" {
             parameters["DCC_ENABLE"] = self.dccEnable
+        }
+        
+        if  self.supplementaryData != [:] {
+            for (key,value) in self.supplementaryData {
+                parameters.updateValue(value, forKey:key)
+            }
         }
         
         print("Request parameters: \n" + parameters.description)
