@@ -257,20 +257,21 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         let session = NSURLSession.sharedSession()
         let dataTask = session.dataTaskWithRequest(request) { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             do {
+                //Stop the spinner
+                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+
                 if let receivedData = data {
                     let decodedResponse = try NSJSONSerialization.JSONObjectWithData(receivedData, options: [NSJSONReadingOptions.AllowFragments]) as! Dictionary <String, String>
                     self.delegate?.HPPManagerCompletedWithResult!(decodedResponse)
                 }
                 else {
                     //error
-                    UIApplication.sharedApplication().networkActivityIndicatorVisible = false
                     self.delegate?.HPPManagerFailedWithError!(error! as NSError)
                     self.hppViewController.dismissViewControllerAnimated(true, completion: nil)
                 }
                 
             } catch {
                 //error
-                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
                 self.delegate?.HPPManagerFailedWithError!(error as NSError)
                 self.hppViewController.dismissViewControllerAnimated(true, completion: nil)
             }
