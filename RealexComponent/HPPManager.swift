@@ -7,6 +7,9 @@
 
 import UIKit
 
+/**
+ *  The delegate callbacks which allow the host app to receive all possible results form the component.
+ */
 @objc protocol HPPManagerDelegate {
     
     optional func HPPManagerCompletedWithResult(result: Dictionary <String, String>);
@@ -15,6 +18,7 @@ import UIKit
     
 }
 
+/// The main object the host app creates.
 class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
     
     var hppViewController: HPPViewController!
@@ -54,12 +58,21 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
     
     var delegate:HPPManagerDelegate?
     
+    /**
+     The initialiser which when HPPManager is created, also creaes and instance of the HPPViewController.
+     
+     */
     override init() {
         super.init()
         self.hppViewController = HPPViewController()
         self.hppViewController.delegate = self
     }
     
+    /**
+     Presents the HPPManager's view modally
+     
+     - parameter viewController: The view controller from which HPPManager will display it's view.
+     */
     func presentViewInViewController(viewController: UIViewController) {
         
         if  self.HPPRequestProducerURL.absoluteString != "" {
@@ -72,7 +85,14 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         }
     }
     
-    func httpBodyWithJSON(json: NSDictionary) -> NSData {
+    /**
+     Converts a dictionay of string pairs into a html string reporesentation and encoded that as date for attaching to the request.
+     
+     - parameter json: The dictionary of paramaters and values to be encoded.
+     
+     - returns: The data encoded HTML string representation of the paramaters and values.
+     */
+    private func httpBodyWithJSON(json: NSDictionary) -> NSData {
         var parameters: Dictionary<String, String>! = [:]
         for (key, value) in json {
             
@@ -86,7 +106,12 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         return parameterString.dataUsingEncoding(NSUTF8StringEncoding)!;
     }
     
-    func getParametersString() -> String {
+    /**
+     Returns the paramaters which have been set on HPPManager as HTML string.
+     
+     - returns: The HTML string representation of the HPP paramaters which have been set.
+     */
+    private func getParametersString() -> String {
         var parameters: Dictionary<String, String>! = [:]
         
         if self.merchantId != "" {
@@ -180,7 +205,10 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         return parameters.stringFromHttpParameters()
     }
     
-    func getHPPRequest() {
+    /**
+     Encoded whatever paramaters have been set and makes a network call to the HPP Request Producer to get the encoded request to sent to HPP.
+     */
+    private func getHPPRequest() {
         
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
@@ -196,21 +224,19 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         let dataTask = session.dataTaskWithRequest(request) { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             do {
                 if let receivedData = data {
+                    // success
                     self.HPPRequest = try NSJSONSerialization.JSONObjectWithData(receivedData, options: []) as! NSDictionary
-                    
-                    //print(jsonResults)
                     self.getPaymentForm()
                 }
                 else {
-                    //error
+                    // error
                     UIApplication.sharedApplication().networkActivityIndicatorVisible = false
                     self.delegate?.HPPManagerFailedWithError!(error! as NSError)
                     self.hppViewController.dismissViewControllerAnimated(true, completion: nil)
                 }
                 
             } catch {
-                
-                //error
+                // error
                 UIApplication.sharedApplication().networkActivityIndicatorVisible = false
                 self.delegate?.HPPManagerFailedWithError!(error as NSError)
                 self.hppViewController.dismissViewControllerAnimated(true, completion: nil)
@@ -219,8 +245,10 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         dataTask.resume()
     }
     
-    
-    func getPaymentForm() {
+    /**
+     Makes a network request to HPP, passing the encoded HPP Reqeust we received from the HPP Request Producer, the responce is a HTML Payment form which is displayed in the Web View.
+     */
+    private func getPaymentForm() {
         
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
@@ -239,7 +267,12 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         
     }
     
-    func decodeHPPResponse(hppResponse: String) {
+    /**
+     Makes a network request to the HPP Response Consumer passing the responce from HPP.
+     
+     - parameter hppResponse: The response from HPP which is to be decoded.
+     */
+    private func decodeHPPResponse(hppResponse: String) {
         
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
@@ -257,21 +290,22 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         let session = NSURLSession.sharedSession()
         let dataTask = session.dataTaskWithRequest(request) { (data:NSData?, response:NSURLResponse?, error:NSError?) -> Void in
             do {
-                //Stop the spinner
+                // Stop the spinner
                 UIApplication.sharedApplication().networkActivityIndicatorVisible = false
 
                 if let receivedData = data {
+                    // success
                     let decodedResponse = try NSJSONSerialization.JSONObjectWithData(receivedData, options: [NSJSONReadingOptions.AllowFragments]) as! Dictionary <String, String>
                     self.delegate?.HPPManagerCompletedWithResult!(decodedResponse)
                 }
                 else {
-                    //error
+                    // error
                     self.delegate?.HPPManagerFailedWithError!(error! as NSError)
                     self.hppViewController.dismissViewControllerAnimated(true, completion: nil)
                 }
                 
             } catch {
-                //error
+                // error
                 self.delegate?.HPPManagerFailedWithError!(error as NSError)
                 self.hppViewController.dismissViewControllerAnimated(true, completion: nil)
             }
@@ -283,17 +317,29 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
     
     //MARK: - HPPViewControllerDelegate
     
+    /**
+    The delegate callback made by the HPP View controller when the interaction with HPP completes successfully.
+    
+    - parameter hppResponse: The response the webview received from HPP.
+    */
     func HPPViewControllerCompletedWithResult(hppResponse: String) {
         
         self.decodeHPPResponse(hppResponse);
     }
     
-    
+    /**
+     The delegate callback made by the HPP View controller when the interaction with HPP fails with an error.
+     
+     - parameter error: The error which occured.
+     */
     func HPPViewControllerFailedWithError(error: NSError?) {
         self.delegate?.HPPManagerFailedWithError!(error)
         self.hppViewController.dismissViewControllerAnimated(true, completion: nil)
     }
     
+    /**
+     The delegate callback made by the HPP View controller when the user cancels the payment.
+     */
     func HPPViewControllerWillDismiss() {
         self.delegate?.HPPManagerCancelled!()
     }

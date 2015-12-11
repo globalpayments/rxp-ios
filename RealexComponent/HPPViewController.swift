@@ -5,15 +5,20 @@
 //  Copyright © 2015 realexpayments. All rights reserved.
 //
 
+
 import UIKit
 import WebKit
 
+/**
+ *  THe delegate callbacks which allow the HPPManager to receive back the results from the webview.
+ */
 @objc protocol HPPViewControllerDelegate {
     optional func HPPViewControllerWillDismiss()
     optional func HPPViewControllerCompletedWithResult(result: String);
     optional func HPPViewControllerFailedWithError(error: NSError?);
 }
 
+/// The Web View Controller which encapsulates the management of the webivew and the interaction with the HPP web page.
 class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, WKScriptMessageHandler, UIWebViewDelegate {
     
     @IBOutlet var containerView : UIView? = nil
@@ -23,14 +28,18 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     
     var delegate:HPPViewControllerDelegate?
     
+    
+    /**
+     Initialise the correct webview for the OS version being run on.
+     */
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if #available(iOS 9.0, *) {
-            //use WKWebView on iOS 9.0 and later
+            // use WKWebView on iOS 9.0 and later
             self.initialiseWebView()
         } else {
-            //use UIView
+            // use UIView
             self.initaliseLegacyWebView()
         }
         
@@ -39,7 +48,11 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
         
     }
     
-    func initialiseWebView() {
+    /**
+     initialises the WKWebview.
+     
+     */
+    private func initialiseWebView() {
         
         let viewScriptString = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);";
         let viewScript = WKUserScript(source: viewScriptString, injectionTime: .AtDocumentEnd, forMainFrameOnly: true)
@@ -56,7 +69,11 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
         self.view = self.webView
     }
     
-    func initaliseLegacyWebView() {
+    /**
+     Initalises UIWebview.
+     
+     */
+    private func initaliseLegacyWebView() {
         
         self.legacyWebView = UIWebView(frame: self.view.bounds)
         self.legacyWebView?.delegate = self
@@ -64,12 +81,19 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
         
     }
     
-    
-    func closeView() {
+    /**
+     Called if the user taps the cancel button.
+     */
+    private func closeView() {
         self.delegate?.HPPViewControllerWillDismiss!()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
+    /**
+     Loads the network request and displays the result in the webview.
+     
+     - parameter request: The network request to be loaded.
+     */
     func loadRequest (request: NSURLRequest) {
         
         if #available(iOS 9.0, *) {
@@ -110,6 +134,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     /* Start the network activity indicator when the web view is loading */
     func webView(webView: WKWebView,
         didStartProvisionalNavigation navigation: WKNavigation){
+            // Start the network activity indicator when the web view is loading
             UIApplication.sharedApplication().networkActivityIndicatorVisible = true
     }
     
@@ -119,13 +144,13 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false
     }
     
-    /* Stop the network activity indicator when the loading fails */
+    /* Stop the network activity indicator when the loading fails and report back to HPPManager */
     func webView(webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: NSError) {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         self.delegate?.HPPViewControllerFailedWithError!(error)
     }
     
-    
+    /* allow all requests to be loaded */
     func webView(webView: WKWebView,
         decidePolicyForNavigationResponse navigationResponse: WKNavigationResponse,
         decisionHandler: (WKNavigationResponsePolicy) -> Void){
@@ -134,6 +159,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
             
     }
     
+    /* allow all navigation actions */
     func webView(webView: WKWebView,
         decidePolicyForNavigationAction navigationAction: WKNavigationAction,
         decisionHandler: (WKNavigationActionPolicy) -> Void) {
@@ -144,11 +170,8 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     
     //MARK: - Javascript Message Callback
     
-    
+    /* Delegate callback which receives any massages from the Javascript bridge. */
     func userContentController(userContentController: WKUserContentController, didReceiveScriptMessage message: WKScriptMessage) {
-        
-        //String(data: hppResponse, encoding: NSUTF8StringEncoding)!
-        
         
         if let messageString = message.body as? String {
             self.delegate?.HPPViewControllerCompletedWithResult!(messageString)
@@ -164,6 +187,8 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     
     //MARK: - Legacy UIWebView Delegate Callbacks
     
+    
+    /* intercepts any URL load requests and checks the URL Scheme, if it is custom scheme 'callbackhandler' this is a message from the webpage and is reported back to the HPP Manager. */
     func webView(webView: UIWebView,
         shouldStartLoadWithRequest request: NSURLRequest,
         navigationType: UIWebViewNavigationType) -> Bool {
@@ -177,17 +202,19 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
             return true
     }
     
-    
+    /* Start the network activity indicator when the web view is loading */
     func webViewDidStartLoad(webView: UIWebView) {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = true
         
     }
     
+    /* Stop the network activity indicator when the loading finishes */
     func webViewDidFinishLoad(webView: UIWebView) {
         UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         
     }
     
+    /* Stop the network activity indicator when the loading fails and report back to HPPManager */
     func webView(webView: UIWebView,
         didFailLoadWithError error: NSError?) {
             UIApplication.sharedApplication().networkActivityIndicatorVisible = false

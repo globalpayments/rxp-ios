@@ -9,12 +9,13 @@ import UIKit
 
 class RealexRemote: NSObject {
     
-    /*
-    * Validate Card Number. Returns true if card number valid. Only allows
-    * non-empty numeric values between 12 and 19 characters. A Luhn check is
-    * also run against the card number.
-    */
+    /**
+    Validate Card Number. Returns true if card number valid. Only allows non-empty numeric values between 12 and 19 characters. A Luhn check is also run against the card number.
     
+    - parameter cardNumber: The credit card number to be checked
+    
+    - returns: Returns true if the card number is valid
+    */
     class func validateCardNumber(cardNumber: String?) -> Bool {
         
         if let number = cardNumber {
@@ -58,11 +59,13 @@ class RealexRemote: NSObject {
         return false
     }
     
-    /*
-    * Validate Card Holder Name. Returns true if card holder valid. Only allows
-    * non-empty ISO/IEC 8859-1 values 100 characters or less.
-    */
+    /**
+    Validate Card Holder Name. Returns true if card holder valid. Only allows non-empty ISO/IEC 8859-1 values 100 characters or less.
     
+    - parameter cardHolderName: THe card holder's name to validate
+    
+    - returns: Returns true if the card holder's name is valid
+    */
     class func validateCardHolderName(cardHolderName: String?) -> Bool {
         // test for undefined
         if let name = cardHolderName {
@@ -84,12 +87,14 @@ class RealexRemote: NSObject {
         }
         return false
     }
+
+    /**
+    Validate Amex CVN. Applies to Amex card types. Only allows 4 numeric characters.
     
-    /*
-    * Validate Amex CVN. Applies to Amex card types. Only allows 4 numeric
-    * characters.
+    - parameter cvn: the Amex CVN to validate
+    
+    - returns: Returns true if the Amex CVN is valid
     */
-    
     class func validateAmexCvn(cvn: String?) -> Bool {
         if let cvnNumber = cvn {
             // test numeric length 4
@@ -101,12 +106,15 @@ class RealexRemote: NSObject {
         }
         return false
     }
+
     
-    /*
-    * Validate CVN. Applies to non-Amex card types. Only allows 3 numeric
-    * characters.
+    /**
+    Validate CVN. Applies to non-Amex card types. Only allows 3 numeric characters.
+    
+    - parameter cvn: the CVN to validate
+    
+    - returns: Returns true if the CVN is valid
     */
-    
     class func validateCvn(cvn: String?) -> Bool {
         if let cvnNumber = cvn {
             // test numeric length 3
@@ -119,11 +127,13 @@ class RealexRemote: NSObject {
         return false
     }
     
-    /*
-    * Validate Expiry Date Format. Only allows 4 numeric characters. Month must
-    * be between 1 and 12.
-    */
+    /**
+    Validate Expiry Date Format. Only allows 4 numeric characters. Month must be between 1 and 12.
     
+    - parameter expiryDate: The card expiry date to validate
+    
+    - returns: Returns true if the expiry date is valid
+    */
     class func validateExpiryDateFormat(expiryDate: String?) -> Bool {
         if let date = expiryDate {
             // test numeric of length 4
@@ -143,11 +153,13 @@ class RealexRemote: NSObject {
         return false
     }
     
-    /*
-    * Validate Expiry Date Not In Past. Also runs checks from
-    * validateExpiryDateFormat.
-    */
+    /**
+    Validate Expiry Date Not In Past. Also runs checks from validateExpiryDateFormat.
     
+    - parameter expiryDate: The card expiry date to validate
+    
+    - returns: Returns true if the expiry date is not in the past
+    */
     class func validateExpiryDateNotInPast(expiryDate: String?) -> Bool {
         if let date = expiryDate {
             // test valid format
