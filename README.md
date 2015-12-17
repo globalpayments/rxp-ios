@@ -8,23 +8,7 @@ You can find more information on how to use this SDK and sign up for a free Real
 
 ## Installation
 
-### Cocoapods
-
-1. To integrate the Realex Payments iOS SDK into your Xcode project using CocoaPods, specify it in your podfile:
-
-```
-pod 'rxp-ios', '~> 1.0.0'
-```
-
-2. Then, run the following command:
-
-```
-$ pod install
-```
-
-### Manual
-
-If you prefer not to use a dependency manager, you can integrate the Realex Payments iOS SDK into your project manually.
+You can integrate the Realex Payments iOS SDK into your project manually.
 
 - Download the the latest release from GitHub:
 
@@ -41,7 +25,7 @@ https://github.com/realexpayments/rxp-ios/releases
 To instantiate an instance of the HPP manager do the following:
 
 ```
-let hppManager = HPPManager();
+let hppManager = HPPManager()
 ```
 
 ### Integrate With Your Server
