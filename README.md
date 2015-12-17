@@ -13,7 +13,7 @@ You can find more information on how to use this SDK and sign up for a free Real
 1. To integrate the Realex Payments iOS SDK into your Xcode project using CocoaPods, specify it in your podfile:
 
     ```
-    pod 'rxp-ios', '~> 1.0.0'
+    pod 'RXPiOS', '~> 1.0.0'
     ```
 
 2. Then, run the following command:
@@ -41,7 +41,7 @@ https://github.com/realexpayments/rxp-ios/releases
 To instantiate an instance of the HPP manager do the following:
 
 	```
-	let hppManager = HPPManager();
+	let hppManager = HPPManager()
 	```
 
 ### Integrate With Your Server
@@ -55,9 +55,9 @@ The HPP Manager requires three server URLs.
 3) **Response Consumer URL**: utilizing one of the Realex HPP server SDKs; takes the encoded response received back from HPP checks the validity of the hash and decodes the response.
 
 	```
-	hppManager.HPPRequestProducerURL = NSURL(string: "http://myserver.com/hppRequestProducer");
-	hppManager.HPPURL = NSURL(string: "https://hpp.realexpayments.com/pay");
-	hppManager.HPPResponseConsumerURL = NSURL(string: "http://myserver.com/hppResponseConsumer");
+	hppManager.HPPRequestProducerURL = NSURL(string: "http://myserver.com/hppRequestProducer")
+	hppManager.HPPURL = NSURL(string: "https://hpp.realexpayments.com/pay")
+	hppManager.HPPResponseConsumerURL = NSURL(string: "http://myserver.com/hppResponseConsumer")
 	```
 
 ### Set Delegate
@@ -65,7 +65,7 @@ The HPP Manager requires three server URLs.
 Next you set the object which will act as the delegate for the HPPManager. The delegate should implement the HPPManagerDelegate protocol and so will receive the response from the HPP Manager:
 
 	```
-	hppManager.delegate = self ;
+	hppManager.delegate = self
 	```		
 
 ### Delegate Callbacks
@@ -81,9 +81,9 @@ There are three possible outcomes from the HPP interaction
 The HPP Manager's delegate should implement the following three functions to receive back the result from the HPP Manager:
 
 	```
-	func HPPManagerCompletedWithResult(result: Dictionary <String, String>);
-	func HPPManagerFailedWithError(error: NSError?);
-	func HPPManagerCancelled();
+	func HPPManagerCompletedWithResult(result: Dictionary <String, String>)
+	func HPPManagerFailedWithError(error: NSError?)
+	func HPPManagerCancelled()
 	```			
 
 ### Present Payment Form
@@ -91,7 +91,7 @@ The HPP Manager's delegate should implement the following three functions to rec
 Using the presentViewInViewController() method the HPP Manager will process the given parameters, get the request from the server, send the encoded request to HPP and present the form received back:
 
 	```
-	hppManager.presentViewInViewController(self);
+	hppManager.presentViewInViewController(self)
 	```
 
 ### Consume HPP Response JSON
@@ -130,7 +130,7 @@ Note, in addition to the predefined properties, you can add any amount of additi
 Realex Payments maintain separate endpoints for live and test transactions. You’ll need to override the HPP URL in the SDK to facilitate testing. Use the code below:
 
 	```
-	hppManager.HPPURL = NSURL(string: "https://hpp.test.realexpayments.com/pay");
+	hppManager.HPPURL = NSURL(string: "https://hpp.test.realexpayments.com/pay")
 	```		
 
 ## License

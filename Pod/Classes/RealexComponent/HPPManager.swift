@@ -2,7 +2,7 @@
 //  HPPManager.swift
 //  rxp-ios
 //
-//  Copyright © 2015 realexpayments. All rights reserved.
+//  Copyright (c) 2015 Realex Payments. All rights reserved.
 //
 
 import UIKit
@@ -10,7 +10,7 @@ import UIKit
 /**
  *  The delegate callbacks which allow the host app to receive all possible results form the component.
  */
-@objc protocol HPPManagerDelegate {
+@objc public protocol HPPManagerDelegate {
     
     optional func HPPManagerCompletedWithResult(result: Dictionary <String, String>);
     optional func HPPManagerFailedWithError(error: NSError?);
@@ -19,55 +19,55 @@ import UIKit
 }
 
 /// The main object the host app creates.
-class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
+public class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
     
     
     /**
      * The request producer which takes the request from the component and encodes it using the shared secret stored on the server side.
      */
-    var HPPRequestProducerURL: NSURL!
+    public var HPPRequestProducerURL: NSURL!
     
     /**
      * The response consumer which takes the encoded response received back from HPP.
      */
-    var HPPResponseConsumerURL: NSURL!
+    public var HPPResponseConsumerURL: NSURL!
     
     /**
      * The HPP server where the component sends the encoded request.
      */
-    var HPPURL: NSURL! = NSURL(string: "https://hpp.realexpayments.com/pay")
+    public var HPPURL: NSURL! = NSURL(string: "https://hpp.realexpayments.com/pay")
     
     /**
      * The merchant ID supplied by Realex Payments – note this is not the merchant number supplied by your bank.
      */
-    var merchantId:String! = ""
+    public var merchantId:String! = ""
     
     /**
      * The sub-account to use for this transaction. If not present, the default sub-account will be used.
      */
-    var account:String! = ""
+    public var account:String! = ""
     
     /**
      * A unique alphanumeric id that’s used to identify the transaction. No spaces are allowed.
      */
-    var orderId:String! = ""
+    public var orderId:String! = ""
     
     /**
      * Total amount to authorise in the lowest unit of the currency – i.e. 100 euro would be entered as 10000.
      * If there is no decimal in the currency (e.g. JPY Yen) then contact Realex Payments. No decimal points are allowed.
      * Amount should be set to 0 for OTB transactions (i.e. where validate card only is set to 1).
      */
-    var amount:String! = ""
+    public var amount:String! = ""
     
     /**
      * A three-letter currency code (Eg. EUR, GBP). A list of currency codes can be provided by your account manager.
      */
-    var currency:String! = ""
+    public var currency:String! = ""
     
     /**
      * Date and time of the transaction. Entered in the following format: YYYYMMDDHHMMSS. Must be within 24 hours of the current time.
      */
-    var timestamp:String! = ""
+    public var timestamp:String! = ""
     
     /**
      * Used to signify whether or not you wish the transaction to be captured in the next batch.
@@ -76,117 +76,117 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
      * This option can be used if a merchant wishes to delay the payment until after the goods have been shipped.
      * Transactions can be settled for up to 115% of the original amount and must be settled within a certain period of time agreed with your issuing bank.
      */
-    var autoSettleFlag:String! = ""
+    public var autoSettleFlag:String! = ""
     
     /**
      * A freeform comment to describe the transaction.
      */
-    var commentOne:String! = ""
+    public var commentOne:String! = ""
     
     /**
      * A freeform comment to describe the transaction.
      */
-    var commentTwo:String! = ""
+    public var commentTwo:String! = ""
     
     /**
      * Used to signify whether or not you want a Transaction Suitability Score for this transaction.
      * Can be "0" for no and "1" for yes.
      */
-    var returnTss:String! = ""
+    public var returnTss:String! = ""
     
     /**
      * The postcode or ZIP of the shipping address.
      */
-    var shippingCode:String! = ""
+    public var shippingCode:String! = ""
     
     /**
      * The country of the shipping address.
      */
-    var shippingCountry:String! = ""
+    public var shippingCountry:String! = ""
     
     /**
      * The postcode or ZIP of the billing address.
      */
-    var billingCode:String! = ""
+    public var billingCode:String! = ""
     
     /**
      * The country of the billing address.
      */
-    var billingCountry:String! = ""
+    public var billingCountry:String! = ""
     
     /**
      * The customer number of the customer. You can send in any additional information about the transaction in this field,
      * which will be visible under the transaction in the RealControl application.
      */
-    var customerNumber:String! = ""
+    public var customerNumber:String! = ""
     
     /**
      * A variable reference also associated with this customer. You can send in any additional information about the transaction in this field,
      * which will be visible under the transaction in the RealControl application.
      */
-    var variableReference:String! = ""
+    public var variableReference:String! = ""
     
     /**
      * A product id associated with this product. You can send in any additional information about the transaction in this field,
      * which will be visible under the transaction in the RealControl application.
      */
-    var productId:String! = ""
+    public var productId:String! = ""
     
     /**
      * Used to set what language HPP is displayed in. Currently HPP is available in English, Spanish and German, with other languages to follow.
      * If the field is not sent in, the default language is the language that is set in your account configuration. This can be set by your account manager.
      */
-    var language:String! = ""
+    public var language:String! = ""
     
     /**
      * Used to set what text is displayed on the payment button for card transactions. If this field is not sent in, "Pay Now" is displayed on the button by default.
      */
-    var cardPaymentButtonText:String! = ""
+    public var cardPaymentButtonText:String! = ""
     
     /**
      * Enable card storage.
      */
-    var cardStorageEnable:String! = ""
+    public var cardStorageEnable:String! = ""
     
     /**
      * Offer to save the card.
      */
-    var offerSaveCard:String! = ""
+    public var offerSaveCard:String! = ""
     
     /**
      * The payer reference.
      */
-    var payerReference:String! = ""
+    public var payerReference:String! = ""
     
     /**
      * The payment reference.
      */
-    var paymentReference:String! = ""
+    public var paymentReference:String! = ""
     
     /**
      * Flag to indicate if the payer exists.
      */
-    var payerExists:String! = ""
+    public var payerExists:String! = ""
     
     /**
      * Used to identify an OTB transaction.
      */
-    var validateCardOnly:String! = ""
+    public var validateCardOnly:String! = ""
     
     /**
      * Transaction level configuration to enable/disable a DCC request. (Only if the merchant is configured).
      */
-    var dccEnable:String! = ""
+    public var dccEnable:String! = ""
     
     /**
      * Supplementary data to be sent to Realex Payments. This will be returned in the HPP response.
      */
-    var supplementaryData:Dictionary<String, String>! = [:]
+    public var supplementaryData:Dictionary<String, String>! = [:]
     
     /**
      * The HPPManager's delegate to receive the result of the interaction.
      */
-    var delegate:HPPManagerDelegate?
+    public var delegate:HPPManagerDelegate?
     
     /**
      * Dictionary to hold the reqeust sent to HPP.
@@ -202,7 +202,7 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
      The initialiser which when HPPManager is created, also creaes and instance of the HPPViewController.
      
      */
-    override init() {
+    override public init() {
         super.init()
         self.hppViewController = HPPViewController()
         self.hppViewController.delegate = self
@@ -213,15 +213,15 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
      
      - parameter viewController: The view controller from which HPPManager will display it's view.
      */
-    func presentViewInViewController(viewController: UIViewController) {
+    public func presentViewInViewController(viewController: UIViewController) {
         
         if  self.HPPRequestProducerURL.absoluteString != "" {
             self.getHPPRequest()
             let navigationController = UINavigationController(rootViewController: self.hppViewController)
             viewController.presentViewController(navigationController, animated: true, completion: nil)
         } else {
-            let alert = UIAlertView(title: "Alert", message: "HPPRequestProducerURL can't be blank", delegate: nil, cancelButtonTitle: "OK");
-            alert.show()
+            // error
+            print("HPPRequestProducerURL can't be blank")
         }
     }
     
@@ -340,7 +340,7 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
             }
         }
         
-        print("Request parameters: \n" + parameters.description)
+        //print("Request parameters: \n" + parameters.description)
         
         return parameters.stringFromHttpParameters()
     }
@@ -401,7 +401,7 @@ class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         request.HTTPBody = self.httpBodyWithJSON(self.HPPRequest)
         
         
-        print("Request: \n" + (request.URL?.absoluteString)!)
+        //print("Request: \n" + (request.URL?.absoluteString)!)
         
         self.hppViewController.loadRequest(request)
         

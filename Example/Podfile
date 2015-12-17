@@ -1,0 +1,12 @@
+source 'https://github.com/CocoaPods/Specs.git'
+use_frameworks!
+
+target 'RXPiOS_Example', :exclusive => true do
+  pod "RXPiOS", :path => "../"
+end
+
+target 'RXPiOS_Tests', :exclusive => true do
+  pod "RXPiOS", :path => "../"
+
+  
+end

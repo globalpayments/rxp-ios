@@ -1,0 +1,14 @@
+PODS:
+  - RXPiOS (1.0.0)
+
+DEPENDENCIES:
+  - RXPiOS (from `../`)
+
+EXTERNAL SOURCES:
+  RXPiOS:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  RXPiOS: 70d7a1297b2edd37631dc95a5249bcb856d7e3d7
+
+COCOAPODS: 0.39.0

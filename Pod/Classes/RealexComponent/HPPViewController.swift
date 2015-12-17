@@ -2,7 +2,7 @@
 //  HPPViewController.swift
 //  rxp-ios
 //
-//  Copyright © 2015 realexpayments. All rights reserved.
+//  Copyright (c) 2015 Realex Payments. All rights reserved.
 //
 
 
@@ -84,7 +84,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     /**
      Called if the user taps the cancel button.
      */
-    private func closeView() {
+    func closeView() {
         self.delegate?.HPPViewControllerWillDismiss!()
         self.dismissViewControllerAnimated(true, completion: nil)
     }
