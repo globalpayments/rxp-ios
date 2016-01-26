@@ -2,7 +2,7 @@
 //  Dictionary+URLDictionary.swift
 //  rxp-ios
 //
-//  Copyright © 2015 realexpayments. All rights reserved.
+//  Copyright (c) 2015 Realex Payments. All rights reserved.
 //
 
 import Foundation

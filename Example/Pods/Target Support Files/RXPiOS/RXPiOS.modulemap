@@ -1,0 +1,6 @@
+framework module RXPiOS {
+  umbrella header "RXPiOS-umbrella.h"
+
+  export *
+  module * { export * }
+}
