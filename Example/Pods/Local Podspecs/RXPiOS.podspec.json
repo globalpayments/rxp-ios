@@ -1,6 +1,6 @@
 {
   "name": "RXPiOS",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "summary": "The official Realex Payments iOS SDK for HPP and Remote API.",
   "homepage": "https://developer.realexpayments.com",
   "license": "MIT",
@@ -10,7 +10,7 @@
   },
   "source": {
     "git": "https://github.com/realexpayments-developers/rxp-ios.git",
-    "tag": "1.0.0"
+    "tag": "1.1.0"
   },
   "platforms": {
     "ios": "9.0"

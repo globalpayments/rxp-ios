@@ -2,9 +2,6 @@
 //  AppDelegate.swift
 //  RXPiOS
 //
-//  Created by Damian Sullivan on 12/16/2015.
-//  Copyright (c) 2015 Realex Payments. All rights reserved.
-//
 
 import UIKit
 
@@ -43,4 +40,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
-
