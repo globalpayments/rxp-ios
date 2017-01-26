@@ -1,5 +1,5 @@
-# Realex Payments iOS SDK
-You can find more information on how to use this SDK and sign up for a free Realex Payments sandbox account at https://developer.realexpayments.com
+# Realex Payments iOS Library
+You can find more information on how to use this library and sign up for a free Realex Payments sandbox account at https://developer.realexpayments.com
 
 ## Requirements
 
@@ -10,10 +10,10 @@ You can find more information on how to use this SDK and sign up for a free Real
 
 ### Cocoapods
 
-1. To integrate the Realex Payments iOS SDK into your Xcode project using CocoaPods, specify it in your podfile:
+1. To integrate the Realex Payments iOS Library into your Xcode project using CocoaPods, specify it in your podfile:
 
 ```
-pod 'RXPiOS', '~> 1.0.0'
+pod 'RXPiOS', '~> 1.1.0'
 ```
 
 2. Then, run the following command:
@@ -24,17 +24,21 @@ $ pod install
 
 ### Manual
 
-If you prefer not to use a dependency manager, you can integrate the Realex Payments iOS SDK into your project manually.
+If you prefer not to use a dependency manager, you can integrate the Realex Payments iOS Library into your project manually.
 
 - Download the the latest release from GitHub:
 
 https://github.com/realexpayments/rxp-ios/releases
 
-- Drag and drop the folder 'RealexComponent' into Xcode to use the HPP part of the SDK.
+- Drag and drop the folder 'RealexComponent' into Xcode to use the HPP part of the library.
+- Run the following command:
+```
+$ pod install
+```
 - If you want to use the card data validation library, drag and drop the folder 'RealexRemote' into your Xcode project.
 
 
-## Using the HPP SDK
+## Using the HPP Library
 
 ### Instantiate
 
@@ -50,14 +54,14 @@ The HPP Manager requires three server URLs.
 
 1) **Request Producer URL**: utilizing one of the Realex HPP server SDKs; this URL creates the necessary request JSON for the component using the shared secret stored on the server side.
 
-2) **HPP URL**: the location where the component sends the encoded request. The default for live transactions is https://hpp.realexpayments.com/pay
+2) **HPP URL**: the location where the component sends the encoded request. The default for live transactions is https://pay.realexpayments.com/pay
 
 3) **Response Consumer URL**: utilizing one of the Realex HPP server SDKs; takes the encoded response received back from HPP checks the validity of the hash and decodes the response.
 
 ```
-hppManager.HPPRequestProducerURL = NSURL(string: "http://myserver.com/hppRequestProducer")
-hppManager.HPPURL = NSURL(string: "https://hpp.realexpayments.com/pay")
-hppManager.HPPResponseConsumerURL = NSURL(string: "http://myserver.com/hppResponseConsumer")
+hppManager.HPPRequestProducerURL = NSURL(string: "https://myserver.com/hppRequestProducer")
+hppManager.HPPURL = NSURL(string: "https://pay.realexpayments.com/pay")
+hppManager.HPPResponseConsumerURL = NSURL(string: "https://myserver.com/hppResponseConsumer")
 ```
 
 ### Set Delegate
@@ -130,7 +134,7 @@ hppManager.supplementaryData["UNKNOWN_2"] = "Unknown value 2"
 Realex Payments maintain separate endpoints for live and test transactions. You’ll need to override the HPP URL in the SDK to facilitate testing. Use the code below:
 
 ```
-hppManager.HPPURL = NSURL(string: "https://hpp.test.realexpayments.com/pay")
+hppManager.HPPURL = NSURL(string: "https://pay.sandbox.realexpayments.com/pay")
 ```		
 
 ## License

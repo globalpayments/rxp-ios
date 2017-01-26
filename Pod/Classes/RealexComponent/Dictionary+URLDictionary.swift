@@ -2,18 +2,16 @@
 //  Dictionary+URLDictionary.swift
 //  rxp-ios
 //
-//  Copyright (c) 2015 Realex Payments. All rights reserved.
-//
 
 import Foundation
 
 extension Dictionary {
-    
+
     /**
     Build string representation of HTTP parameter dictionary of keys and objects
-    
+
     This percent escapes in compliance with RFC 3986
-    
+
     - returns: The string representation in the form of key1=value1&key2=value2 where the keys and values are percent escaped
     */
     func stringFromHttpParameters() -> String {
@@ -24,5 +22,5 @@ extension Dictionary {
         }
         return parameterArray.joinWithSeparator("&")
     }
-    
+
 }
