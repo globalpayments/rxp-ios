@@ -20,7 +20,7 @@ extension Dictionary {
             let percentEscapedValue = (value as! String).stringByAddingPercentEncodingForURLQueryValue()!
             return "\(percentEscapedKey)=\(percentEscapedValue)"
         }
-        return parameterArray.joinWithSeparator("&")
+        return parameterArray.joined(separator: "&")
     }
 
 }
