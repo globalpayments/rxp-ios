@@ -27,11 +27,6 @@ class ViewController: UIViewController, HPPManagerDelegate {
         hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
         hppManager.HPPResponseConsumerURL = URL(string: "https://dev.rlxcarts.com/mobileSDKs/response.php")
 
-        hppManager.merchantId = "realexsandbox"
-        hppManager.account = "internet"
-        hppManager.amount = "100"
-        hppManager.currency = "EUR"
-
         hppManager.delegate = self
         hppManager.presentViewInViewController(self)
     }
