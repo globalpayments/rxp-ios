@@ -3,7 +3,7 @@ You can find more information on how to use this library and sign up for a free 
 
 ## Requirements
 
-- iOS 9.0+
+- iOS 8.0+
 - Xcode 7.1.1+
 
 ## Installation
@@ -13,7 +13,7 @@ You can find more information on how to use this library and sign up for a free 
 1. To integrate the Realex Payments iOS Library into your Xcode project using CocoaPods, specify it in your podfile:
 
 ```
-pod 'RXPiOS', '~> 1.1.0'
+pod 'RXPiOS', '~> 1.2.0'
 ```
 
 2. Then, run the following command:

@@ -23,9 +23,9 @@ class ViewController: UIViewController, HPPManagerDelegate {
 
         let hppManager = HPPManager()
 
-        hppManager.HPPRequestProducerURL = URL(string: "https://dev.rlxcarts.com/mobileSDKs/request.php")
+        hppManager.HPPRequestProducerURL = URL(string: "https://myserver.com/hppRequestProducer")
         hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
-        hppManager.HPPResponseConsumerURL = URL(string: "https://dev.rlxcarts.com/mobileSDKs/response.php")
+        hppManager.HPPResponseConsumerURL = URL(string: "https://myserver.com/hppResponseConsumer")
 
         hppManager.delegate = self
         hppManager.presentViewInViewController(self)
