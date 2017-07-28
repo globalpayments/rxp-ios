@@ -4,6 +4,19 @@
 //
 
 import UIKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
 
 class RealexRemote: NSObject {
 
@@ -14,13 +27,13 @@ class RealexRemote: NSObject {
 
     - returns: Returns true if the card number is valid
     */
-    class func validateCardNumber(cardNumber: String?) -> Bool {
+    class func validateCardNumber(_ cardNumber: String?) -> Bool {
 
         if let number = cardNumber {
 
             // test numeric and length between 12 and 19
             let regex = "^\\d{12,19}$"
-            if number.rangeOfString(regex, options: .RegularExpressionSearch) == nil {
+            if number.range(of: regex, options: .regularExpression) == nil {
                 return false
             }
 
@@ -29,10 +42,10 @@ class RealexRemote: NSObject {
             var digit = 0;
             var addend = 0;
             var timesTwo = false;
+            let length = number.characters.count - 1;
 
-            for (var i = (number.characters.count - 1); i >= 0; i--) {
-                digit = Int(number.substringWithRange(Range<String.Index>(start: number.startIndex.advancedBy(i),
-                    end: number.startIndex.advancedBy(i+1))))!
+            for i in (0...length).reversed() { 
+                digit = Int(number.substring(with: (number.characters.index(number.startIndex, offsetBy: i) ..< number.characters.index(number.startIndex, offsetBy: i+1))))!
 
                 if (timesTwo) {
                     addend = digit * 2;
@@ -64,19 +77,19 @@ class RealexRemote: NSObject {
 
     - returns: Returns true if the card holder's name is valid
     */
-    class func validateCardHolderName(cardHolderName: String?) -> Bool {
+    class func validateCardHolderName(_ cardHolderName: String?) -> Bool {
         // test for undefined
         if let name = cardHolderName {
 
             // test white space only
-            let trimmedString = name.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+            let trimmedString = name.trimmingCharacters(in: CharacterSet.whitespaces)
             if trimmedString == "" {
                 return false
             }
 
             // test ISO/IEC 8859-1 characters between 1 and 100
             let regex = "^[\\u0020-\\u007E\\u00A0-\\u00FF]{1,100}$"
-            if name.rangeOfString(regex, options: .RegularExpressionSearch) == nil {
+            if name.range(of: regex, options: .regularExpression) == nil {
                 return false
             }
 
@@ -93,11 +106,11 @@ class RealexRemote: NSObject {
 
     - returns: Returns true if the Amex CVN is valid
     */
-    class func validateAmexCvn(cvn: String?) -> Bool {
+    class func validateAmexCvn(_ cvn: String?) -> Bool {
         if let cvnNumber = cvn {
             // test numeric length 4
             let regex = "^\\d{4}$"
-            if cvnNumber.rangeOfString(regex, options: .RegularExpressionSearch) == nil {
+            if cvnNumber.range(of: regex, options: .regularExpression) == nil {
                 return false
             }
             return true
@@ -113,11 +126,11 @@ class RealexRemote: NSObject {
 
     - returns: Returns true if the CVN is valid
     */
-    class func validateCvn(cvn: String?) -> Bool {
+    class func validateCvn(_ cvn: String?) -> Bool {
         if let cvnNumber = cvn {
             // test numeric length 3
             let regex = "^\\d{3}$"
-            if cvnNumber.rangeOfString(regex, options: .RegularExpressionSearch) == nil {
+            if cvnNumber.range(of: regex, options: .regularExpression) == nil {
                 return false
             }
             return true
@@ -132,15 +145,14 @@ class RealexRemote: NSObject {
 
     - returns: Returns true if the expiry date is valid
     */
-    class func validateExpiryDateFormat(expiryDate: String?) -> Bool {
+    class func validateExpiryDateFormat(_ expiryDate: String?) -> Bool {
         if let date = expiryDate {
             // test numeric of length 4
             let regex = "^\\d{4}$"
-            if date.rangeOfString(regex, options: .RegularExpressionSearch) == nil {
+            if date.range(of: regex, options: .regularExpression) == nil {
                 return false
             }
-            let month = Int(date.substringWithRange(Range<String.Index>(start: date.startIndex.advancedBy(0),
-                end: date.startIndex.advancedBy(2))))!
+            let month = Int(date.substring(with: (date.characters.index(date.startIndex, offsetBy: 0) ..< date.characters.index(date.startIndex, offsetBy: 2))))!
 
             // test month range is 1-12
             if (month < 1 || month > 12) {
@@ -158,25 +170,23 @@ class RealexRemote: NSObject {
 
     - returns: Returns true if the expiry date is not in the past
     */
-    class func validateExpiryDateNotInPast(expiryDate: String?) -> Bool {
+    class func validateExpiryDateNotInPast(_ expiryDate: String?) -> Bool {
         if let date = expiryDate {
             // test valid format
             if self.validateExpiryDateFormat(date) == false {
                 return false
             }
 
-            let month = Int(date.substringWithRange(Range<String.Index>(start: date.startIndex.advancedBy(0),
-                end: date.startIndex.advancedBy(2))))
-            let year = Int(date.substringWithRange(Range<String.Index>(start: date.startIndex.advancedBy(2),
-                end: date.startIndex.advancedBy(4))))
+            let month = Int(date.substring(with: (date.characters.index(date.startIndex, offsetBy: 0) ..< date.characters.index(date.startIndex, offsetBy: 2))))
+            let year = Int(date.substring(with: (date.characters.index(date.startIndex, offsetBy: 2) ..< date.characters.index(date.startIndex, offsetBy: 4))))
 
-            let components = NSCalendar.currentCalendar().components([NSCalendarUnit.Year, NSCalendarUnit.Month], fromDate: NSDate())
+            let components = (Calendar.current as NSCalendar).components([NSCalendar.Unit.year, NSCalendar.Unit.month], from: Date())
             let currentMonth = components.month
             let currentYear = components.year
 
-            if (year < (currentYear % 100)) {
+            if (year! < (currentYear! % 100)) {
                 return false;
-            } else if (year == (currentYear % 100) && month < currentMonth) {
+            } else if (year! == (currentYear! % 100) && month! < currentMonth!) {
                 return false;
             }
             return true

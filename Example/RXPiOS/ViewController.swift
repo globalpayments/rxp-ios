@@ -19,18 +19,13 @@ class ViewController: UIViewController, HPPManagerDelegate {
     }
 
 
-    @IBAction func payButtonAction(sender: AnyObject) {
+    @IBAction func payButtonAction(_ sender: AnyObject) {
 
         let hppManager = HPPManager()
 
-        hppManager.HPPRequestProducerURL = NSURL(string: "https://myserver.com/hppRequestProducer")
-        hppManager.HPPURL = NSURL(string: "https://pay.sandbox.realexpayments.com/pay")
-        hppManager.HPPResponseConsumerURL = NSURL(string: "https://myserver.com/hppResponseConsumer")
-
-        hppManager.merchantId = "realexsandbox"
-        hppManager.account = "internet"
-        hppManager.amount = "100"
-        hppManager.currency = "EUR"
+        hppManager.HPPRequestProducerURL = URL(string: "https://myserver.com/hppRequestProducer")
+        hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
+        hppManager.HPPResponseConsumerURL = URL(string: "https://myserver.com/hppResponseConsumer")
 
         hppManager.delegate = self
         hppManager.presentViewInViewController(self)
@@ -39,12 +34,12 @@ class ViewController: UIViewController, HPPManagerDelegate {
 
     //MARK: - HPPManagerDelegate
 
-    func HPPManagerCompletedWithResult(result: Dictionary <String, String>) {
+    func HPPManagerCompletedWithResult(_ result: Dictionary <String, String>) {
         // success
         print(NSString(format: "%@", result) as String)
     }
 
-    func HPPManagerFailedWithError(error: NSError?) {
+    func HPPManagerFailedWithError(_ error: NSError?) {
         // error
         if let hppError = error {
             print(hppError.localizedDescription)
