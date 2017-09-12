@@ -28,7 +28,7 @@ class ViewController: UIViewController, HPPManagerDelegate {
     @IBAction func payButtonAction(_ sender: AnyObject) {
 
         let hppManager = HPPManager()
-
+		hppManager.isEncoded = true
 		// hppManager.HPPRequestProducerURL = URL(string: "https://myserver.com/hppRequestProducer")
 		hppManager.HPPRequestProducerURL = URL(string: "https://dev.rlxcarts.com/mobileSDKsV2/request.php")
         hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")

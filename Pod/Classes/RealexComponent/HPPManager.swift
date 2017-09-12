@@ -176,7 +176,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 	
 	If set to false - the iOS library should just leave the values alone
      */
-    open var isEncoded:Bool! = true
+    open var isEncoded:Bool! = false
 	/**
 	* Transaction level configuration to enable/disable a DCC request. (Only if the merchant is configured).
 	*/
@@ -337,7 +337,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         if self.dccEnable != "" {
             parameters["DCC_ENABLE"] = self.dccEnable
         }
-
+		
 
         if  self.supplementaryData != [:] {
             for (key,value) in self.supplementaryData {
