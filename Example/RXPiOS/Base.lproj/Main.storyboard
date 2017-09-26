@@ -1,15 +1,33 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1421" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="vXZ-lx-hvc">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="A2d-0Z-WZ8">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Navigation Controller-->
+        <scene sceneID="u6s-Y0-hOG">
+            <objects>
+                <navigationController id="A2d-0Z-WZ8" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="qih-CN-YCJ">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" red="0.30625456569999998" green="0.58243036270000004" blue="0.84711122510000003" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                        <color key="barTintColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="vXZ-lx-hvc" kind="relationship" relationship="rootViewController" id="Gjv-tH-xEs"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mx7-zx-uUR" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1248" y="35"/>
+        </scene>
+        <!--Realex Payments-->
         <scene sceneID="ufC-wZ-h7g">
             <objects>
                 <viewController id="vXZ-lx-hvc" customClass="ViewController" customModule="RXPiOS_Example" customModuleProvider="target" sceneMemberID="viewController">
@@ -21,24 +39,66 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wef-U1-ibL">
-                                <rect key="frame" x="280" y="279" width="41" height="42"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wef-U1-ibL">
+                                <rect key="frame" x="12" y="609" width="351" height="50"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="eOR-Uu-mzv"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <state key="normal" title="Pay"/>
                                 <connections>
                                     <action selector="payButtonAction:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="x0y-xt-3CY"/>
                                 </connections>
                             </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Qlm-e9-pCp">
+                                <rect key="frame" x="16" y="101" width="343" height="500"/>
+                                <color key="backgroundColor" red="0.30625456571578979" green="0.58243036270141602" blue="0.84711122512817383" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="16"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please click on Pay Button to Test sdk " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gZY-WP-64r">
+                                <rect key="frame" x="2" y="72" width="371" height="21"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="DZu-Zi-yzo"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="U3x-9F-5la">
+                                <rect key="frame" x="177" y="323.5" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.30625456569999998" green="0.58243036270000004" blue="0.84711122510000003" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
-                            <constraint firstItem="wef-U1-ibL" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" id="Ze8-kw-ds7"/>
-                            <constraint firstItem="wef-U1-ibL" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="cKP-12-SRa"/>
+                            <constraint firstItem="Qlm-e9-pCp" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="16" id="GMe-OH-JhG"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="wef-U1-ibL" secondAttribute="bottom" constant="8" id="J47-dX-TPf"/>
+                            <constraint firstAttribute="trailing" secondItem="wef-U1-ibL" secondAttribute="trailing" constant="12" id="LkY-Js-l11"/>
+                            <constraint firstItem="wef-U1-ibL" firstAttribute="top" secondItem="Qlm-e9-pCp" secondAttribute="bottom" constant="8" id="Oep-mM-6Mw"/>
+                            <constraint firstItem="U3x-9F-5la" firstAttribute="centerY" secondItem="kh9-bI-dsS" secondAttribute="centerY" id="QYD-HK-Nkb"/>
+                            <constraint firstItem="gZY-WP-64r" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" constant="8" id="VnP-Rz-lGZ"/>
+                            <constraint firstItem="wef-U1-ibL" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="12" id="e8Q-lW-2qz"/>
+                            <constraint firstItem="Qlm-e9-pCp" firstAttribute="top" secondItem="gZY-WP-64r" secondAttribute="bottom" constant="8" id="fGt-Pk-HDW"/>
+                            <constraint firstAttribute="trailing" secondItem="gZY-WP-64r" secondAttribute="trailing" constant="2" id="jCP-7H-VQH"/>
+                            <constraint firstItem="gZY-WP-64r" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="2" id="liW-AY-NA9"/>
+                            <constraint firstItem="U3x-9F-5la" firstAttribute="centerX" secondItem="kh9-bI-dsS" secondAttribute="centerX" id="nrX-Sc-8LS"/>
+                            <constraint firstAttribute="trailing" secondItem="Qlm-e9-pCp" secondAttribute="trailing" constant="16" id="qRu-HK-lqj"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="Realex Payments" id="fqL-wg-T2k"/>
+                    <connections>
+                        <outlet property="activityIndicator" destination="U3x-9F-5la" id="7tS-By-McF"/>
+                        <outlet property="payButton" destination="wef-U1-ibL" id="O1E-QZ-e28"/>
+                        <outlet property="result_textView" destination="Qlm-e9-pCp" id="Inm-nm-K0d"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="-452" y="34.632683658170919"/>
         </scene>
     </scenes>
 </document>
