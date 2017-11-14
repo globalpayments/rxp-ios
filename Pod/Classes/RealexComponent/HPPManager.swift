@@ -171,9 +171,16 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
     open var validateCardOnly:String! = ""
 
     /**
-     * Transaction level configuration to enable/disable a DCC request. (Only if the merchant is configured).
+	* Used to check HppRequest base64 encoding.
+	If set to true - the iOS library should decode the Base64 encoded values in the HPP request JSON
+
+	If set to false - the iOS library should just leave the values alone
      */
-    open var dccEnable:String! = ""
+    open var isEncoded:Bool! = false
+	/**
+	* Transaction level configuration to enable/disable a DCC request. (Only if the merchant is configured).
+	*/
+	open var dccEnable:String! = ""
 
     /**
      * Supplementary data to be sent to Realex Payments. This will be returned in the HPP response.
@@ -230,14 +237,14 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
      - returns: The data encoded HTML string representation of the paramaters and values.
      */
     fileprivate func httpBodyWithJSON(_ json: NSDictionary) -> Data {
+
         var parameters: Dictionary<String, String>! = [:]
         for (key, value) in json {
 
             parameters[key as! String] = value as? String
         }
-
-        parameters["HPP_TEMPLATE_TYPE"] = "LIGHTBOX"
-        parameters["HPP_ORIGIN"] = self.HPPRequestProducerURL.scheme! + "://" + self.HPPRequestProducerURL.host!
+		parameters["HPP_VERSION"] = "2"
+		parameters["HPP_POST_RESPONSE"] = self.HPPRequestProducerURL.scheme! + "://" + self.HPPRequestProducerURL.host!
 
         let parameterString = parameters.stringFromHttpParameters()
         return parameterString.data(using: String.Encoding.utf8)!;
@@ -306,7 +313,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         if self.language != "" {
             parameters["HPP_LANG"] = self.language
         }
-        if self.cardPaymentButtonText != "" {
+		if self.cardPaymentButtonText != "" {
             parameters["CARD_PAYMENT_BUTTON"] = self.cardPaymentButtonText
         }
         if self.cardStorageEnable != "" {
@@ -331,6 +338,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
             parameters["DCC_ENABLE"] = self.dccEnable
         }
 
+
         if  self.supplementaryData != [:] {
             for (key,value) in self.supplementaryData {
                 parameters.updateValue(value, forKey:key)
@@ -350,8 +358,9 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
 
         let cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
-        let request = NSMutableURLRequest(url: self.HPPRequestProducerURL, cachePolicy: cachePolicy, timeoutInterval: 30.0)
-        request.httpMethod = "POST"
+		let request: NSMutableURLRequest = NSMutableURLRequest(url: self.HPPRequestProducerURL, cachePolicy: cachePolicy, timeoutInterval: 30.0)
+
+		request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("*/*", forHTTPHeaderField: "Accept")
         request.httpBody = self.getParametersString().data(using: String.Encoding.utf8)
@@ -363,6 +372,12 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
                 if let receivedData = data {
                     // success
                     self.HPPRequest = try JSONSerialization.jsonObject(with: receivedData, options: []) as! NSDictionary
+					//	let hppMutableRequest = NSMutableDictionary.init(dictionary: self.HPPRequest)
+					if (self.isEncoded == true)
+					{
+						self.HPPRequest = self.HPPRequest.DecodeAllValues()
+					}
+
                     self.getPaymentForm()
                 }
                 else {
@@ -378,7 +393,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
                 self.delegate?.HPPManagerFailedWithError!(error as NSError)
                 self.hppViewController.dismiss(animated: true, completion: nil)
             }
-        }) 
+        })
         dataTask.resume()
     }
 
@@ -419,7 +434,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("*/*", forHTTPHeaderField: "Accept")
-        
+
         let parameters = "hppResponse=" + hppResponse
 
         request.httpBody = parameters.data(using: String.Encoding.utf8)
@@ -446,7 +461,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
                 self.delegate?.HPPManagerFailedWithError!(error as NSError)
                 self.hppViewController.dismiss(animated: true, completion: nil)
             }
-        }) 
+        })
         dataTask.resume()
 
     }
@@ -469,7 +484,8 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 
      - parameter error: The error which occured.
      */
-    func HPPViewControllerFailedWithError(_ error: Error?) {
+
+    private func HPPViewControllerFailedWithError(_ error: Error?) {
         self.delegate?.HPPManagerFailedWithError!(error as NSError?)
         self.hppViewController.dismiss(animated: true, completion: nil)
     }
@@ -481,4 +497,43 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         self.delegate?.HPPManagerCancelled!()
     }
 
+}
+extension NSDictionary {
+	//: ### Base64 encoding a string
+
+	func DecodeAllValues() -> NSMutableDictionary
+	{
+		let dic: NSMutableDictionary! = NSMutableDictionary.init(capacity: self.count)
+		for value in self {
+			if (value.value as? String) != ""
+			{
+				dic[value.key] = (value.value as?String)?.base64Decoded()
+
+			}
+			else{
+				dic[value.key] = value.value
+
+			}
+		}
+
+		return dic
+	}
+
+}
+extension String
+{
+	func base64Encoded() -> String? {
+		if let data = self.data(using: .utf8) {
+			return data.base64EncodedString()
+		}
+		return nil
+	}
+
+	//: ### Base64 decoding a string
+	func base64Decoded() -> String? {
+		if let data = Data(base64Encoded: self) {
+			return String(data: data, encoding: .utf8)
+		}
+		return nil
+	}
 }
