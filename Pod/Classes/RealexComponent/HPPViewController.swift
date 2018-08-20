@@ -81,7 +81,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     /**
      Called if the user taps the cancel button.
      */
-    func closeView() {
+    @objc func closeView() {
         self.delegate?.HPPViewControllerWillDismiss!()
         self.dismiss(animated: true, completion: nil)
     }
