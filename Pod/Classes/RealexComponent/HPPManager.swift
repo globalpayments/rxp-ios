@@ -201,6 +201,16 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
      * The view owned by the HPP Manager, which encapsulates the web view.
      */
     fileprivate var hppViewController: HPPViewController!
+    
+    /**
+     * The list of headers that customers can provide for making requests to producer URL
+     */
+    fileprivate var HppRequestProducerHeaders: [String: String] = [:]
+    
+    /**
+     * The list of headers that customers can provide for making requests to consumer URL
+     */
+    fileprivate var HPPResponseConsumerHeaders: [String: String] = [:]
 
     /**
      The initialiser which when HPPManager is created, also creaes and instance of the HPPViewController.
@@ -210,6 +220,38 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         super.init()
         self.hppViewController = HPPViewController()
         self.hppViewController.delegate = self
+    }
+    
+    /**
+     * Adds a new header to be sent on the producer request
+     */
+    open func addHPPRequestProducerHeader(header: String, value: String)
+    {
+        self.HppRequestProducerHeaders[header] = value
+    }
+    
+    /**
+     * Adds a new header to be sent on the consumer request
+     */
+    open func addHPPResponseConsumerHeader(header: String, value: String)
+    {
+        self.HPPResponseConsumerHeaders[header] = value
+    }
+    
+    /**
+     * Adds a new header to be sent on the producer request
+     */
+    open func clearHPPRequestProducerHeaders()
+    {
+        self.HppRequestProducerHeaders.removeAll()
+    }
+    
+    /**
+     * Adds a new header to be sent on the consumer request
+     */
+    open func clearsHPPResponseConsumerHeaders()
+    {
+        self.HPPResponseConsumerHeaders.removeAll()
     }
 
     /**
@@ -363,6 +405,9 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 		request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("*/*", forHTTPHeaderField: "Accept")
+        for (header, value) in self.HppRequestProducerHeaders {
+            request.setValue(value, forHTTPHeaderField: header)
+        }
         request.httpBody = self.getParametersString().data(using: String.Encoding.utf8)
 
 
@@ -434,6 +479,9 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         request.setValue("*/*", forHTTPHeaderField: "Accept")
+        for (header, value) in self.HPPResponseConsumerHeaders {
+            request.setValue(value, forHTTPHeaderField: header)
+        }
 
         let parameters = "hppResponse=" + hppResponse
 

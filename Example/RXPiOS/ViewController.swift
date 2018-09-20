@@ -29,8 +29,10 @@ class ViewController: UIViewController, HPPManagerDelegate {
 
         let hppManager = HPPManager()
 		hppManager.isEncoded = false
+        hppManager.addHPPRequestProducerHeader(header: "Authorization", value: "Bearer ...")
 		hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
         hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
+        hppManager.addHPPResponseConsumerHeader(header: "Authorization", value: "Bearer ...")
 		hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
 		self.activityIndicator.isHidden = false
 

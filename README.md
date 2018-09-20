@@ -58,10 +58,14 @@ The HPP Manager requires three server URLs.
 
 3) **Response Consumer URL**: utilizing one of the Realex HPP server SDKs; takes the encoded response received back from HPP checks the validity of the hash and decodes the response.
 
+4) **Headers**: it is possible to append any header to be sent with the producer and consumer requests. Mostly used for sending authentication headers.
+
 ```
 hppManager.HPPRequestProducerURL = NSURL(string: "https://myserver.com/hppRequestProducer")
 hppManager.HPPURL = NSURL(string: "https://pay.realexpayments.com/pay")
 hppManager.HPPResponseConsumerURL = NSURL(string: "https://myserver.com/hppResponseConsumer")
+hppManager.addHPPRequestProducerHeader(header: "Authorization", value: "Bearer ...")
+hppManager.addHPPResponseConsumerHeader(header: "Authorization", value: "Bearer ...")
 ```
 
 ### Set Delegate
