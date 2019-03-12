@@ -225,14 +225,19 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 	open func presentViewInViewController(_ viewController: UIViewController) {
 
 		if  self.HPPRequestProducerURL.absoluteString != "" {
-			//self.getHPPRequest()
-			self.getPaybylink()
+			self.getHPPRequest()
 			let navigationController = UINavigationController(rootViewController: self.hppViewController)
 			viewController.present(navigationController, animated: true, completion: nil)
 		} else {
 			// error
 			print("HPPRequestProducerURL can't be blank")
 		}
+	}
+
+	open func loadPayByLink(_ viewController: UIViewController) {
+		self.getPayByLink()
+		let navigationController = UINavigationController(rootViewController: self.hppViewController)
+		viewController.present(navigationController, animated: true, completion: nil)
 	}
 
 	/**
@@ -409,7 +414,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 	}
 
 	//GetPaybylink Request
-	open func getPaybylink() {
+	fileprivate func getPayByLink() {
 
 		UIApplication.shared.isNetworkActivityIndicatorVisible = true
 
@@ -436,8 +441,9 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 					//print(json!["hppPayByLink"] as! String)
 					DispatchQueue.main.async {
 						UIApplication.shared.isNetworkActivityIndicatorVisible = false
-						self.delegate?.HPPManagerCompletedWithResult!(json!)
-						self.hppViewController.dismiss(animated: true, completion: nil)
+//						self.delegate?.HPPManagerCompletedWithResult!(json!)
+//						self.hppViewController.dismiss(animated: true, completion: nil)
+						self.hppViewController.loadRequest(URLRequest(url: URL(string: json!["hppPayByLink"] as! String)!))
 					}
 
 				}
@@ -464,7 +470,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 	}
 
 	//GetPaybylink Parameter list
-	open func getPaybylinkParameters() -> Dictionary<String, String> {
+	fileprivate func getPaybylinkParameters() -> Dictionary<String, String> {
 
 		let dateNow = getDateAsString(format: "yyyyMMddHHmmss")
 		let strValue1 = dateNow + "." + self.merchantId + "." + self.orderId + "." + self.amount + "." + self.currency
@@ -515,7 +521,6 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 		request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 		request.setValue("text/html", forHTTPHeaderField: "Accept")
 		request.httpBody = self.httpBodyWithJSON(self.HPPRequest)
-
 
 		//print("Request: \n" + (request.URL?.absoluteString)!)
 

@@ -47,7 +47,7 @@ class ViewController: UIViewController, HPPManagerDelegate {
 	func payByLink() {
 
 		let hppManager = HPPManager()
-		hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
+		//hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
 		hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
 		hppManager.merchantId = "heartlandgpsandbox"
 		hppManager.account = "3dsecure"
@@ -62,12 +62,11 @@ class ViewController: UIViewController, HPPManagerDelegate {
 		self.payButton.isEnabled = false
 		activityIndicator.hidesWhenStopped = true
 		hppManager.delegate = self
-		hppManager.presentViewInViewController(self)
+		hppManager.loadPayByLink(self)
 	}
 
 
     //MARK: - HPPManagerDelegate
-
 	func HPPManagerCompletedWithResult(_ result: Dictionary <String, Any>) {
         // success
         print(result)
