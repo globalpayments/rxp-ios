@@ -111,8 +111,10 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
                     self.dismiss(animated: true, completion: nil)
                 }
                 else {
-                    let htmlString = String(data: data!, encoding: String.Encoding.utf8)
-                    self.webView!.loadHTMLString(htmlString!, baseURL: request.url)
+					DispatchQueue.main.async {
+						let htmlString = String(data: data!, encoding: String.Encoding.utf8)
+						self.webView!.loadHTMLString(htmlString!, baseURL: request.url)
+					}
 
                 }
             })

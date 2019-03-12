@@ -27,27 +27,50 @@ class ViewController: UIViewController, HPPManagerDelegate {
 
     @IBAction func payButtonAction(_ sender: AnyObject) {
 
-        let hppManager = HPPManager()
-		hppManager.isEncoded = false
-		hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
-        hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
-		hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
-		self.activityIndicator.isHidden = false
+//        let hppManager = HPPManager()
+//		hppManager.isEncoded = true
+//		hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
+//        hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
+//		hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
+//		self.activityIndicator.isHidden = false
+//
+//		activityIndicator.startAnimating()
+//		self.payButton.isEnabled = false
+//		activityIndicator.hidesWhenStopped = true
+//        hppManager.delegate = self
+//        hppManager.presentViewInViewController(self)
 
+		self.payByLink()
+    }
+
+	//MARK: - Pay By Link
+	func payByLink() {
+
+		let hppManager = HPPManager()
+		hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
+		hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
+		hppManager.merchantId = "heartlandgpsandbox"
+		hppManager.account = "3dsecure"
+		hppManager.orderId = "N6qsk4kYRZihmPrTXWYS6g"
+		hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
+		hppManager.amount = "1001"
+		hppManager.currency = "EUR"
+		hppManager.sharedSecret = "secret"
+
+		self.activityIndicator.isHidden = false
 		activityIndicator.startAnimating()
 		self.payButton.isEnabled = false
 		activityIndicator.hidesWhenStopped = true
-        hppManager.delegate = self
-        hppManager.presentViewInViewController(self)
-    }
+		hppManager.delegate = self
+		hppManager.presentViewInViewController(self)
+	}
 
 
     //MARK: - HPPManagerDelegate
 
-    func HPPManagerCompletedWithResult(_ result: Dictionary <String, String>) {
+	func HPPManagerCompletedWithResult(_ result: Dictionary <String, Any>) {
         // success
-        print(NSString(format: "%@", result) as String)
-		//self.result_text.text = "helo how are you"
+        print(result)
 		DispatchQueue.main.async() {
 			self.DisplayResult(result: NSString(format: "%@", result) as String);
 		}
@@ -69,9 +92,12 @@ class ViewController: UIViewController, HPPManagerDelegate {
 
 	func DisplayResult(result : String)
 	{
-		self.result_textView.text = NSString(format: "%@", result) as String
-		self.result_textView.textAlignment = .left
-		self.activityIndicator.stopAnimating();
-		self.payButton.isEnabled = true;
+		DispatchQueue.main.async {
+
+			self.result_textView.text = result
+			self.result_textView.textAlignment = .left
+			self.activityIndicator.stopAnimating();
+			self.payButton.isEnabled = true;
+		}
 	}
 }
