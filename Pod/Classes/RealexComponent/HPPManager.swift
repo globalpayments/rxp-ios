@@ -438,14 +438,18 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 				if let receivedData = data {
 					// success
 					let json = try JSONSerialization.jsonObject(with: receivedData, options: []) as? Dictionary<String, Any>
-					//print(json!["hppPayByLink"] as! String)
 					DispatchQueue.main.async {
 						UIApplication.shared.isNetworkActivityIndicatorVisible = false
-//						self.delegate?.HPPManagerCompletedWithResult!(json!)
-//						self.hppViewController.dismiss(animated: true, completion: nil)
-						self.hppViewController.loadRequest(URLRequest(url: URL(string: json!["hppPayByLink"] as! String)!))
-					}
 
+						if (json!["hppPayByLink"] as? String) != nil {
+							self.hppViewController.loadRequest(URLRequest(url: URL(string: json!["hppPayByLink"] as! String)!))
+						}else {
+							let errorDict = (json!["errors"]) as? Array<AnyObject>
+							print(errorDict![0])
+							self.delegate?.HPPManagerCompletedWithResult!(errorDict![0] as! Dictionary<String, Any>)
+							self.hppViewController.dismiss(animated: true, completion: nil)
+						}
+					}
 				}
 				else {
 					// error
@@ -485,7 +489,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 					  "ORDER_ID" : self.orderId,
 					  "AMOUNT" : self.amount,
 					  "CURRENCY" : self.currency,
-					  "SHA1HASH" : hash2,
+					  "SHA1HASH" : "wkefhiuffh",
 					  "TIMESTAMP" : dateNow,
 					  "AUTO_SETTLE_FLAG" : self.autoSettleFlag,
 					  "COMMENT1" : self.commentOne,
