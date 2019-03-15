@@ -48,7 +48,7 @@ class ViewController: UIViewController, HPPManagerDelegate {
 
 		let hppManager = HPPManager()
 		//hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
-		hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
+		//hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
 		hppManager.merchantId = "heartlandgpsandbox"
 		hppManager.account = "3dsecure"
 		hppManager.orderId = "N6qsk4kYRZihmPrTXWYS6g"

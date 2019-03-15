@@ -2,6 +2,11 @@
 //  HPPManager.swift
 //  rxp-ios
 
+let KEY_LIBRARY_TYPE = "x-gp-library"
+let KEY_VERSION = "version"
+let KEY_LIBRARY_VALUE = "iOS"
+let VALUE_BUILDNUMBER: String = Bundle(identifier: "org.cocoapods.RXPiOS")!.infoDictionary!["CFBundleShortVersionString"]! as! String
+
 import UIKit
 
 /**
@@ -423,6 +428,8 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 
 		request.httpMethod = "POST"
 		request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+		request.setValue(KEY_LIBRARY_VALUE, forHTTPHeaderField: KEY_LIBRARY_TYPE)
+		request.setValue(VALUE_BUILDNUMBER, forHTTPHeaderField: KEY_VERSION)
 
 		var data = Data.init()
 		do {
@@ -480,7 +487,6 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 		let strValue1 = dateNow + "." + self.merchantId + "." + self.orderId + "." + self.amount + "." + self.currency
 		let hash1 = strValue1.sha1!
 		let hash2 = (hash1 + "." + self.sharedSecret).sha1!
-		print("hash2:\(hash2)")
 
 		var parameters: Dictionary<String, String>! = [:]
 
@@ -489,7 +495,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 					  "ORDER_ID" : self.orderId,
 					  "AMOUNT" : self.amount,
 					  "CURRENCY" : self.currency,
-					  "SHA1HASH" : "wkefhiuffh",
+					  "SHA1HASH" : hash2,
 					  "TIMESTAMP" : dateNow,
 					  "AUTO_SETTLE_FLAG" : self.autoSettleFlag,
 					  "COMMENT1" : self.commentOne,
