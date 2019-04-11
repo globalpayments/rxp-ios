@@ -29,45 +29,38 @@ class RealexRemote: NSObject {
     */
     class func validateCardNumber(_ cardNumber: String?) -> Bool {
 
-        if let number = cardNumber {
+        guard let number = cardNumber else {
+            return false
+        }
 
-            // test numeric and length between 12 and 19
-            let regex = "^\\d{12,19}$"
-            if number.range(of: regex, options: .regularExpression) == nil {
+        // test numeric and length between 12 and 19
+        let regex = "^\\d{12,19}$"
+        if number.range(of: regex, options: .regularExpression) == nil {
+            return false
+        }
+
+        // luhn check
+        var sum = 0
+        let digitStrings = number.reversed().map { String($0) }
+
+        for tuple in digitStrings.enumerated() {
+            if let digit = Int(tuple.element) {
+                let odd = tuple.offset % 2 == 1
+
+                switch (odd, digit) {
+                case (true, 9):
+                    sum += 9
+                case (true, 0...8):
+                    sum += (digit * 2) % 9
+                default:
+                    sum += digit
+                }
+            } else {
                 return false
             }
-
-            // luhn check
-            var sum = 0;
-            var digit = 0;
-            var addend = 0;
-            var timesTwo = false;
-            let length = number.characters.count - 1;
-
-            for i in (0...length).reversed() { 
-                digit = Int(number.substring(with: (number.characters.index(number.startIndex, offsetBy: i) ..< number.characters.index(number.startIndex, offsetBy: i+1))))!
-
-                if (timesTwo) {
-                    addend = digit * 2;
-                    if (addend > 9) {
-                        addend -= 9;
-                    }
-                } else {
-                    addend = digit;
-                }
-                sum += addend;
-                timesTwo = !timesTwo;
-            }
-
-            let modulus = sum % 10;
-            if (modulus != 0) {
-                return false;
-            }
-
-            return true;
-
         }
-        return false
+        return sum % 10 == 0
+
     }
 
     /**
@@ -152,7 +145,7 @@ class RealexRemote: NSObject {
             if date.range(of: regex, options: .regularExpression) == nil {
                 return false
             }
-            let month = Int(date.substring(with: (date.characters.index(date.startIndex, offsetBy: 0) ..< date.characters.index(date.startIndex, offsetBy: 2))))!
+            let month = Int(String(date[..<date.index(date.startIndex, offsetBy: 2)]))!
 
             // test month range is 1-12
             if (month < 1 || month > 12) {
@@ -177,8 +170,8 @@ class RealexRemote: NSObject {
                 return false
             }
 
-            let month = Int(date.substring(with: (date.characters.index(date.startIndex, offsetBy: 0) ..< date.characters.index(date.startIndex, offsetBy: 2))))
-            let year = Int(date.substring(with: (date.characters.index(date.startIndex, offsetBy: 2) ..< date.characters.index(date.startIndex, offsetBy: 4))))
+            let month = Int(String(date[..<date.index(date.startIndex, offsetBy: 2)]))
+            let year = Int(String(date[date.index(date.startIndex, offsetBy: 2)..<date.index(date.startIndex, offsetBy: 4)]))
 
             let components = (Calendar.current as NSCalendar).components([NSCalendar.Unit.year, NSCalendar.Unit.month], from: Date())
             let currentMonth = components.month

@@ -371,7 +371,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
             do {
                 if let receivedData = data {
                     // success
-                    self.HPPRequest = try JSONSerialization.jsonObject(with: receivedData, options: []) as! NSDictionary
+                    self.HPPRequest = try JSONSerialization.jsonObject(with: receivedData, options: []) as? NSDictionary
 					//	let hppMutableRequest = NSMutableDictionary.init(dictionary: self.HPPRequest)
 					if (self.isEncoded == true)
 					{
