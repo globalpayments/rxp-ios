@@ -171,7 +171,7 @@ class RealexRemote: NSObject {
             }
 
             let month = Int(String(date[..<date.index(date.startIndex, offsetBy: 2)]))
-            let year = Int(String(date[date.index(date.startIndex, offsetBy: 3)...]))
+            let year = Int(String(date[date.index(date.startIndex, offsetBy: 2)..<date.index(date.startIndex, offsetBy: 4)]))
 
             let components = (Calendar.current as NSCalendar).components([NSCalendar.Unit.year, NSCalendar.Unit.month], from: Date())
             let currentMonth = components.month
