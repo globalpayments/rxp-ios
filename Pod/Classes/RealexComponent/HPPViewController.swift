@@ -40,7 +40,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
             self.initaliseLegacyWebView()
         }
 
-        let cancelButton = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.plain, target: self, action: #selector(HPPViewController.closeView))
+        let cancelButton = UIBarButtonItem(title: "Cancel", style: UIBarButtonItem.Style.plain, target: self, action: #selector(HPPViewController.closeView))
         self.navigationItem.leftBarButtonItem = cancelButton
 
     }
@@ -81,7 +81,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     /**
      Called if the user taps the cancel button.
      */
-    func closeView() {
+    @objc func closeView() {
         self.delegate?.HPPViewControllerWillDismiss!()
         self.dismiss(animated: true, completion: nil)
     }
@@ -111,8 +111,10 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
                     self.dismiss(animated: true, completion: nil)
                 }
                 else {
-                    let htmlString = String(data: data!, encoding: String.Encoding.utf8)
-                    self.webView!.loadHTMLString(htmlString!, baseURL: request.url)
+					DispatchQueue.main.async {
+						let htmlString = String(data: data!, encoding: String.Encoding.utf8)
+						self.webView!.loadHTMLString(htmlString!, baseURL: request.url)
+					}
 
                 }
             })
@@ -188,7 +190,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     /* intercepts any URL load requests and checks the URL Scheme, if it is custom scheme 'callbackhandler' this is a message from the webpage and is reported back to the HPP Manager. */
     func webView(_ webView: UIWebView,
         shouldStartLoadWith request: URLRequest,
-        navigationType: UIWebViewNavigationType) -> Bool {
+        navigationType: UIWebView.NavigationType) -> Bool {
 
             if (request.url?.scheme == "callbackhandler") {
 

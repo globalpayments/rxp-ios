@@ -42,11 +42,10 @@ class RealexRemote: NSObject {
             var digit = 0;
             var addend = 0;
             var timesTwo = false;
-            let length = number.characters.count - 1;
+            let length = number.count - 1;
 
             for i in (0...length).reversed() { 
-                digit = Int(number.substring(with: (number.characters.index(number.startIndex, offsetBy: i) ..< number.characters.index(number.startIndex, offsetBy: i+1))))!
-
+				digit = Int(number[number.index(number.startIndex, offsetBy: i) ..< number.index(number.startIndex, offsetBy: 2)])!
                 if (timesTwo) {
                     addend = digit * 2;
                     if (addend > 9) {
@@ -152,8 +151,8 @@ class RealexRemote: NSObject {
             if date.range(of: regex, options: .regularExpression) == nil {
                 return false
             }
-            let month = Int(date.substring(with: (date.characters.index(date.startIndex, offsetBy: 0) ..< date.characters.index(date.startIndex, offsetBy: 2))))!
 
+			let month = Int(date[date.index(date.startIndex, offsetBy: 0) ..< date.index(date.startIndex, offsetBy: 2)])!
             // test month range is 1-12
             if (month < 1 || month > 12) {
                 return false;
@@ -177,9 +176,9 @@ class RealexRemote: NSObject {
                 return false
             }
 
-            let month = Int(date.substring(with: (date.characters.index(date.startIndex, offsetBy: 0) ..< date.characters.index(date.startIndex, offsetBy: 2))))
-            let year = Int(date.substring(with: (date.characters.index(date.startIndex, offsetBy: 2) ..< date.characters.index(date.startIndex, offsetBy: 4))))
 
+			let month = Int(date[date.index(date.startIndex, offsetBy: 0) ..< date.index(date.startIndex, offsetBy: 2)])
+			let year = Int(date[date.index(date.startIndex, offsetBy: 2) ..< date.index(date.startIndex, offsetBy: 4)])
             let components = (Calendar.current as NSCalendar).components([NSCalendar.Unit.year, NSCalendar.Unit.month], from: Date())
             let currentMonth = components.month
             let currentYear = components.year
