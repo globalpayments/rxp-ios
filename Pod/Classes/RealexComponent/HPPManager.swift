@@ -183,6 +183,11 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 	open var dccEnable:String! = ""
 
     /**
+    * CSS text to style HPP page
+    */
+    open var css:String?
+
+    /**
      * Supplementary data to be sent to Realex Payments. This will be returned in the HPP response.
      */
     open var supplementaryData:Dictionary<String, String>! = [:]
@@ -414,7 +419,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 
 
         //print("Request: \n" + (request.URL?.absoluteString)!)
-
+        self.hppViewController.setCSS(css)
         self.hppViewController.loadRequest(request as URLRequest)
 
     }
