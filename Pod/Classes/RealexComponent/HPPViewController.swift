@@ -20,6 +20,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
 
     @IBOutlet var containerView : UIView? = nil
 
+    var cssString: String?
     var webView: WKWebView?
     var legacyWebView: UIWebView?
 
@@ -124,6 +125,12 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
         }
     }
 
+    /**
+     Sets the CSS string to be used to style the loaded HPP page
+    */
+    func setCSS(_ css: String?) {
+        cssString = css
+    }
 
     //MARK: - WKWebView Delegate Callbacks
 
@@ -138,7 +145,11 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     /* Stop the network activity indicator when the loading finishes */
     func webView(_ webView: WKWebView,
         didFinish navigation: WKNavigation){
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        if let css = cssString {
+            let js = "var style = document.createElement('style'); style.innerHTML = '\(css)'; document.head.appendChild(style);"
+            webView.evaluateJavaScript(js, completionHandler: nil)
+        }
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
 
     /* Stop the network activity indicator when the loading fails and report back to HPPManager */
