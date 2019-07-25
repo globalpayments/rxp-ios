@@ -13,7 +13,7 @@ You can find more information on how to use this library and sign up for a free 
 1. To integrate the Realex Payments iOS Library into your Xcode project using CocoaPods, specify it in your podfile:
 
 ```
-pod 'RXPiOS', '~> 1.3.0'
+pod 'RXPiOS', '~> 1.4.0'
 ```
 
 2. Then, run the following command:
