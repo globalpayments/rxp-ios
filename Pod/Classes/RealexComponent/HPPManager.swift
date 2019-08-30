@@ -222,6 +222,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
         if  self.HPPRequestProducerURL.absoluteString != "" {
             self.getHPPRequest()
             let navigationController = UINavigationController(rootViewController: self.hppViewController)
+            navigationController.modalPresentationStyle = .fullScreen
             viewController.present(navigationController, animated: true, completion: nil)
         } else {
             // error
