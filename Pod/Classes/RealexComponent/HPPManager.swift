@@ -9,7 +9,7 @@ import UIKit
  */
 @objc public protocol HPPManagerDelegate {
 
-    @objc optional func HPPManagerCompletedWithResult(_ result: Dictionary <String, String>);
+    @objc optional func HPPManagerCompletedWithResult(_ result: Dictionary <String, Any>);
     @objc optional func HPPManagerFailedWithError(_ error: NSError?);
     @objc optional func HPPManagerCancelled();
 
@@ -447,7 +447,7 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 
                 if let receivedData = data {
                     // success
-                    let decodedResponse = try JSONSerialization.jsonObject(with: receivedData, options: [JSONSerialization.ReadingOptions.allowFragments]) as! Dictionary <String, String>
+                    let decodedResponse = try JSONSerialization.jsonObject(with: receivedData, options: [JSONSerialization.ReadingOptions.allowFragments]) as! Dictionary <String, Any>
                     self.delegate?.HPPManagerCompletedWithResult!(decodedResponse)
                 }
                 else {
