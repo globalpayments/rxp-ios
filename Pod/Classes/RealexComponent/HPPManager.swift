@@ -9,7 +9,7 @@ import UIKit
  */
 @objc public protocol HPPManagerDelegate {
 
-    @objc optional func HPPManagerCompletedWithResult(_ result: Dictionary <String, Any>);
+    @objc optional func HPPManagerCompletedWithResult(_ result: Dictionary <String, String>);
     @objc optional func HPPManagerFailedWithError(_ error: NSError?);
     @objc optional func HPPManagerCancelled();
 
