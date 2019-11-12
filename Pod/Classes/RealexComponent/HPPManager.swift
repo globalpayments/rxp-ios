@@ -509,7 +509,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
                 let decodedResponse = try? JSONDecoder().decode(T.self, from: receivedData)
             else {
                 // error
-                self.delegate?.HPPManagerFailedWithError?(error as NSError?)
+                self.delegate?.HPPManagerFailedWithError!(error as NSError?)
                 self.genericDelegate?.HPPManagerFailedWithError(error)
                 self.hppViewController.dismiss(animated: true, completion: nil)
                 return
