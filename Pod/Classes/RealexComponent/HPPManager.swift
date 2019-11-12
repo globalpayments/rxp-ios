@@ -28,7 +28,7 @@ public protocol HPPSwiftManagerDelegate: class {
 }
 
 /**
- *  A type-erased
+ *  A type-erased implementer of the `HPPSwiftManagerDelegate` protocol
  */
 fileprivate class AnyHPPSwiftManagerDelegate<T: Decodable>: HPPSwiftManagerDelegate {
     
