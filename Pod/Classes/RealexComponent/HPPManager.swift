@@ -504,7 +504,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
 
             guard
                 let receivedData = data,
-                let decodedResponse = (try? JSONSerialization.jsonObject(with: receivedData, options: [JSONSerialization.ReadingOptions.allowFragments])) as? T
+                let decodedResponse = try? JSONDecoder().decode(T.self, from: receivedData)
             else {
                 // error
                 self.delegate?.HPPManagerFailedWithError?(error as NSError?)
