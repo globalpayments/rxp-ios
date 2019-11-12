@@ -15,8 +15,54 @@ import UIKit
 
 }
 
+/**
+ *  The delegate callbacks which allow the host app to receive all possible results from the component using a generic decodable type.
+ */
+public protocol HPPSwiftManagerDelegate: class {
+    
+    associatedtype PaymentServiceResponse: Decodable
+    func HPPSwiftManagerCompletedWithResult(_ result: PaymentServiceResponse)
+    func HPPSwiftManagerFailedWithError(_ error: Error?)
+    func HPPSwiftManagerCancelled()
+    
+}
+
+/**
+ *  A type-erased
+ */
+fileprivate class AnyHPPSwiftManagerDelegate<T: Decodable>: HPPSwiftManagerDelegate {
+    
+    private let completed: (T) -> Void
+    private let failed: (Error?) -> Void
+    private let cancelled: () -> Void
+    
+    init<D: HPPSwiftManagerDelegate>(_ delegate: D) where D.PaymentServiceResponse == T {
+        self.completed = { [weak delegate] in delegate?.HPPSwiftManagerCompletedWithResult($0) }
+        self.failed = { [weak delegate] in delegate?.HPPSwiftManagerFailedWithError($0) }
+        self.cancelled = { [weak delegate] in delegate?.HPPSwiftManagerCancelled() }
+    }
+    
+    public func HPPSwiftManagerCompletedWithResult(_ result: T) {
+        self.completed(result)
+    }
+    
+    public func HPPSwiftManagerFailedWithError(_ error: Error?) {
+        self.failed(error)
+    }
+    
+    public func HPPSwiftManagerCancelled() {
+        self.cancelled()
+    }
+    
+}
+
 /// The main object the host app creates.
-open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
+/// A convenience payment manager for payment service responses that have a `[String: String]` structure
+open class HPPManager: GenericHPPManager<[String: String]> { }
+
+/// The main object the host app creates.
+/// A payment manager that can decode payment service responses that have a generic structure
+open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 
 
     /**
@@ -190,7 +236,14 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
     /**
      * The HPPManager's delegate to receive the result of the interaction.
      */
-    open var delegate:HPPManagerDelegate?
+    open weak var delegate:HPPManagerDelegate?
+    
+    /**
+     * The HPPManager's generic delegate to receive the result of the interaction.
+     * `T` is the generic type that defines the structure of the payment response.
+     */
+    private var swiftPrivateDelegate: AnyHPPSwiftManagerDelegate<T>?
+    
 
     /**
      * Dictionary to hold the reqeust sent to HPP.
@@ -201,6 +254,10 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
      * The view owned by the HPP Manager, which encapsulates the web view.
      */
     fileprivate var hppViewController: HPPViewController!
+    
+    open func setGenericDelegate<D: HPPSwiftManagerDelegate>(_ delegate: D) where D.PaymentServiceResponse == T {
+        self.swiftPrivateDelegate = AnyHPPSwiftManagerDelegate(delegate)
+    }
 
     /**
      The initialiser which when HPPManager is created, also creaes and instance of the HPPViewController.
@@ -441,26 +498,24 @@ open class HPPManager: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 
         let session = URLSession.shared
         let dataTask = session.dataTask(with: request, completionHandler: { (data:Data?, response:URLResponse?, error:Error?) -> Void in
-            do {
-                // Stop the spinner
-                UIApplication.shared.isNetworkActivityIndicatorVisible = false
+            
+            // Stop the spinner
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
 
-                if let receivedData = data {
-                    // success
-                    let decodedResponse = try JSONSerialization.jsonObject(with: receivedData, options: [JSONSerialization.ReadingOptions.allowFragments]) as! Dictionary <String, Any>
-                    self.delegate?.HPPManagerCompletedWithResult!(decodedResponse)
-                }
-                else {
-                    // error
-                    self.delegate?.HPPManagerFailedWithError!(error! as NSError)
-                    self.hppViewController.dismiss(animated: true, completion: nil)
-                }
-
-            } catch {
+            guard
+                let receivedData = data,
+                let decodedResponse = (try? JSONSerialization.jsonObject(with: receivedData, options: [JSONSerialization.ReadingOptions.allowFragments])) as? T
+            else {
                 // error
-                self.delegate?.HPPManagerFailedWithError!(error as NSError)
+                self.delegate?.HPPManagerFailedWithError?(error as NSError?)
+                self.swiftPrivateDelegate?.HPPSwiftManagerFailedWithError(error)
                 self.hppViewController.dismiss(animated: true, completion: nil)
+                return
             }
+            
+            // success
+            self.delegate?.HPPManagerCompletedWithResult?(decodedResponse as! Dictionary <String, String>)
+            self.swiftPrivateDelegate?.HPPSwiftManagerCompletedWithResult(decodedResponse)
         })
         dataTask.resume()
 
