@@ -18,39 +18,39 @@ import UIKit
 /**
  *  The delegate callbacks which allow the host app to receive all possible results from the component using a generic decodable type.
  */
-public protocol HPPSwiftManagerDelegate: class {
+public protocol GenericHPPManagerDelegate: class {
     
     associatedtype PaymentServiceResponse: Decodable
-    func HPPSwiftManagerCompletedWithResult(_ result: PaymentServiceResponse)
-    func HPPSwiftManagerFailedWithError(_ error: Error?)
-    func HPPSwiftManagerCancelled()
+    func HPPManagerCompletedWithResult(_ result: PaymentServiceResponse)
+    func HPPManagerFailedWithError(_ error: Error?)
+    func HPPManagerCancelled()
     
 }
 
 /**
  *  A type-erased implementer of the `HPPSwiftManagerDelegate` protocol
  */
-fileprivate class AnyHPPSwiftManagerDelegate<T: Decodable>: HPPSwiftManagerDelegate {
+fileprivate class AnyGenericHPPManagerDelegate<T: Decodable>: GenericHPPManagerDelegate {
     
     private let completed: (T) -> Void
     private let failed: (Error?) -> Void
     private let cancelled: () -> Void
     
-    init<D: HPPSwiftManagerDelegate>(_ delegate: D) where D.PaymentServiceResponse == T {
-        self.completed = { [weak delegate] in delegate?.HPPSwiftManagerCompletedWithResult($0) }
-        self.failed = { [weak delegate] in delegate?.HPPSwiftManagerFailedWithError($0) }
-        self.cancelled = { [weak delegate] in delegate?.HPPSwiftManagerCancelled() }
+    init<D: GenericHPPManagerDelegate>(_ delegate: D) where D.PaymentServiceResponse == T {
+        self.completed = { [weak delegate] in delegate?.HPPManagerCompletedWithResult($0) }
+        self.failed = { [weak delegate] in delegate?.HPPManagerFailedWithError($0) }
+        self.cancelled = { [weak delegate] in delegate?.HPPManagerCancelled() }
     }
     
-    public func HPPSwiftManagerCompletedWithResult(_ result: T) {
+    public func HPPManagerCompletedWithResult(_ result: T) {
         self.completed(result)
     }
     
-    public func HPPSwiftManagerFailedWithError(_ error: Error?) {
+    public func HPPManagerFailedWithError(_ error: Error?) {
         self.failed(error)
     }
     
-    public func HPPSwiftManagerCancelled() {
+    public func HPPManagerCancelled() {
         self.cancelled()
     }
     
@@ -242,7 +242,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      * The HPPManager's generic delegate to receive the result of the interaction.
      * `T` is the generic type that defines the structure of the payment response.
      */
-    private var swiftPrivateDelegate: AnyHPPSwiftManagerDelegate<T>?
+    private var genericDelegate: AnyGenericHPPManagerDelegate<T>?
     
 
     /**
@@ -255,8 +255,8 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      */
     fileprivate var hppViewController: HPPViewController!
     
-    open func setGenericDelegate<D: HPPSwiftManagerDelegate>(_ delegate: D) where D.PaymentServiceResponse == T {
-        self.swiftPrivateDelegate = AnyHPPSwiftManagerDelegate(delegate)
+    open func setGenericDelegate<D: GenericHPPManagerDelegate>(_ delegate: D) where D.PaymentServiceResponse == T {
+        self.genericDelegate = AnyGenericHPPManagerDelegate(delegate)
     }
 
     /**
@@ -441,6 +441,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
                     // error
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     self.delegate?.HPPManagerFailedWithError!(error! as NSError)
+                    self.genericDelegate?.HPPManagerFailedWithError(error)
                     self.hppViewController.dismiss(animated: true, completion: nil)
                 }
 
@@ -448,6 +449,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
                 // error
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
                 self.delegate?.HPPManagerFailedWithError!(error as NSError)
+                self.genericDelegate?.HPPManagerFailedWithError(error)
                 self.hppViewController.dismiss(animated: true, completion: nil)
             }
         })
@@ -508,14 +510,14 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
             else {
                 // error
                 self.delegate?.HPPManagerFailedWithError?(error as NSError?)
-                self.swiftPrivateDelegate?.HPPSwiftManagerFailedWithError(error)
+                self.genericDelegate?.HPPManagerFailedWithError(error)
                 self.hppViewController.dismiss(animated: true, completion: nil)
                 return
             }
             
             // success
             self.delegate?.HPPManagerCompletedWithResult?(decodedResponse as! Dictionary <String, String>)
-            self.swiftPrivateDelegate?.HPPSwiftManagerCompletedWithResult(decodedResponse)
+            self.genericDelegate?.HPPManagerCompletedWithResult(decodedResponse)
         })
         dataTask.resume()
 
@@ -542,6 +544,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
 
     private func HPPViewControllerFailedWithError(_ error: Error?) {
         self.delegate?.HPPManagerFailedWithError!(error as NSError?)
+        self.genericDelegate?.HPPManagerFailedWithError(error)
         self.hppViewController.dismiss(animated: true, completion: nil)
     }
 
@@ -550,6 +553,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      */
     func HPPViewControllerWillDismiss() {
         self.delegate?.HPPManagerCancelled!()
+        self.genericDelegate?.HPPManagerCancelled()
     }
 
 }
