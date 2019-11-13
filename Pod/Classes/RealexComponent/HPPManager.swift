@@ -28,7 +28,7 @@ public protocol GenericHPPManagerDelegate: class {
 }
 
 /**
- *  A type-erased implementer of the `HPPSwiftManagerDelegate` protocol
+ *  A type-erased implementer of the `GenericHPPManagerDelegate` protocol
  */
 fileprivate class AnyGenericHPPManagerDelegate<T: Decodable>: GenericHPPManagerDelegate {
     
