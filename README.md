@@ -13,7 +13,7 @@ You can find more information on how to use this library and sign up for a free 
 1. To integrate the Realex Payments iOS Library into your Xcode project using CocoaPods, specify it in your podfile:
 
 ```
-pod 'RXPiOS', '~> 1.4.0'
+pod 'RXPiOS', '~> 1.5.0'
 ```
 
 2. Then, run the following command:
@@ -70,7 +70,7 @@ Next you set the object which will act as the delegate for the HPPManager. The d
 
 ```
 hppManager.delegate = self
-```		
+```
 
 ### Delegate Callbacks
 
@@ -88,7 +88,7 @@ The HPP Manager's delegate should implement the following three functions to rec
 func HPPManagerCompletedWithResult(result: Dictionary <String, String>)
 func HPPManagerFailedWithError(error: NSError?)
 func HPPManagerCancelled()
-```			
+```
 
 ### Present Payment Form
 
@@ -120,22 +120,22 @@ hppManager.amount = "100"
 hppManager.currency = "EUR"
 ```
 
-These will be sent to the *Request Producer URL*, your server-side code must be setup to take in these values and pass them to the HPP server-side SDK for them to be included in the request. 	
+These will be sent to the *Request Producer URL*, your server-side code must be setup to take in these values and pass them to the HPP server-side SDK for them to be included in the request.
 
 Note, in addition to the predefined properties, you can add any amount of additional arbitrary properties as follows:
 
 ```
 hppManager.supplementaryData["UNKNOWN_1"] = "Unknown value 1"
 hppManager.supplementaryData["UNKNOWN_2"] = "Unknown value 2"
-```		
+```
 
-### Testing		
+### Testing
 
 Realex Payments maintain separate endpoints for live and test transactions. You’ll need to override the HPP URL in the SDK to facilitate testing. Use the code below:
 
 ```
 hppManager.HPPURL = NSURL(string: "https://pay.sandbox.realexpayments.com/pay")
-```		
+```
 
 ## License
 
