@@ -146,7 +146,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     func webView(_ webView: WKWebView,
         didFinish navigation: WKNavigation){
         if let css = cssString {
-            let js = "var style = document.createElement('style'); style.innerHTML = '\(css)'; document.head.appendChild(style);"
+            let js = "var style = document.createElement('style'); style.innerHTML = \"\(css)\"; document.head.appendChild(style);"
             webView.evaluateJavaScript(js, completionHandler: nil)
         }
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
