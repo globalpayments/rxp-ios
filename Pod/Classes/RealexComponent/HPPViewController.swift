@@ -52,8 +52,8 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
      */
     fileprivate func initialiseWebView() {
 
-        let viewScriptString = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);";
-        let viewScript = WKUserScript(source: viewScriptString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        let viewScriptString = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum- scale=1.0, user-scalable=no'); document.getElementsByTagName('head')[0].appendChild(meta);";
+        let viewScript = WKUserScript(source: viewScriptString, injectionTime: .atDocumentStart, forMainFrameOnly: true)
 
         let userContentController = WKUserContentController()
         userContentController.addUserScript(viewScript)
