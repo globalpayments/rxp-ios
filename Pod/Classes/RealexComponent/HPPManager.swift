@@ -551,7 +551,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      */
 
     func HPPViewControllerFailedWithError(_ error: NSError?) {
-        self.delegate?.HPPManagerFailedWithError!(error as NSError?)
+        self.delegate?.HPPManagerFailedWithError!(error)
         self.genericDelegate?.HPPManagerFailedWithError(error)
         self.hppViewController.dismiss(animated: true, completion: nil)
     }
