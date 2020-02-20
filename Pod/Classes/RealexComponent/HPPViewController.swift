@@ -55,9 +55,21 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
         let viewScriptString = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum- scale=1.0, user-scalable=no'); document.getElementsByTagName('head')[0].appendChild(meta);";
         let viewScript = WKUserScript(source: viewScriptString, injectionTime: .atDocumentStart, forMainFrameOnly: true)
 
+        let timeout = 5000
+        let timeoutScriptString = """
+        document.getElementById('rxp-primary-btn').addEventListener('click', function() {
+          setTimeout( function() {
+            window.webkit.messageHandlers.timeoutHandler.postMessage('timeout')
+        }, \(timeout));
+        });
+        """
+        let timeoutScript = WKUserScript(source: timeoutScriptString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+
         let userContentController = WKUserContentController()
-        userContentController.addUserScript(viewScript)
+        userContentController.add(self, name: "timeoutHandler")
         userContentController.add(self, name: "callbackHandler")
+        userContentController.addUserScript(viewScript)
+        userContentController.addUserScript(timeoutScript)
 
         let configuration = WKWebViewConfiguration()
         configuration.userContentController = userContentController
@@ -180,8 +192,14 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
 
     /* Delegate callback which receives any massages from the Javascript bridge. */
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+        if webView == nil {
+            return
+        }
 
-        if let messageString = message.body as? String {
+        if message.name == "timeoutHandler" {
+            // JavaScript 500ms timeout callback
+            self.delegate?.HPPViewControllerFailedWithError!(nil)
+        } else if let messageString = message.body as? String {
             self.delegate?.HPPViewControllerCompletedWithResult!(messageString)
         }
         else {
@@ -190,6 +208,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
         }
 
         self.dismiss(animated: true, completion: nil)
+        webView = nil
     }
 
 
