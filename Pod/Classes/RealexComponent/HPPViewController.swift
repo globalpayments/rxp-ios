@@ -30,8 +30,8 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     /**
      Initialise the correct webview for the OS version being run on.
      */
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
         if #available(iOS 9.0, *) {
             // use WKWebView on iOS 9.0 and later
