@@ -10,6 +10,7 @@ import WebKit
  *  THe delegate callbacks which allow the HPPManager to receive back the results from the webview.
  */
 @objc protocol HPPViewControllerDelegate {
+    @objc optional func HPPViewControllerWillCancel()
     @objc optional func HPPViewControllerWillDismiss()
     @objc optional func HPPViewControllerCompletedWithResult(_ result: String);
     @objc optional func HPPViewControllerFailedWithError(_ error: NSError?);
@@ -95,7 +96,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
      Called if the user taps the cancel button.
      */
     @objc func closeView() {
-        self.delegate?.HPPViewControllerWillDismiss!()
+        self.delegate?.HPPViewControllerWillCancel?()
         self.dismiss(animated: true, completion: nil)
     }
 
@@ -207,6 +208,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
             self.delegate?.HPPViewControllerFailedWithError!(nil)
         }
 
+        delegate?.HPPViewControllerWillDismiss?()
         self.dismiss(animated: true, completion: nil)
         webView = nil
     }
@@ -224,6 +226,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
 
                 let message = request.url?.host!.removingPercentEncoding
                 self.delegate?.HPPViewControllerCompletedWithResult!(message!)
+                self.delegate?.HPPViewControllerWillDismiss?()
                 self.dismiss(animated: true, completion: nil)
             }
             return true
