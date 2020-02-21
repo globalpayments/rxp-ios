@@ -12,7 +12,7 @@ import UIKit
     @objc optional func HPPManagerCompletedWithResult(_ result: Dictionary <String, String>);
     @objc optional func HPPManagerFailedWithError(_ error: NSError?);
     @objc optional func HPPManagerCancelled();
-
+    @objc optional func HPPManagerDismissed();
 }
 
 /**
@@ -559,9 +559,13 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
     /**
      The delegate callback made by the HPP View controller when the user cancels the payment.
      */
-    func HPPViewControllerWillDismiss() {
+    func HPPViewControllerWillCancel() {
         self.delegate?.HPPManagerCancelled!()
         self.genericDelegate?.HPPManagerCancelled()
+    }
+
+    func HPPViewControllerWillDismiss() {
+        self.delegate?.HPPManagerDismissed?()
     }
 
 }
