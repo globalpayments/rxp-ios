@@ -64,6 +64,10 @@ open class HPPManager: GenericHPPManager<[String: String]> { }
 /// A payment manager that can decode payment service responses that have a generic structure
 open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
 
+    /**
+     * Callback for current running data task.
+     */
+    typealias DataTaskCallback = ((Result<T, Error>) -> Void)
 
     /**
      * The request producer which takes the request from the component and encodes it using the shared secret stored on the server side.
@@ -259,6 +263,8 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      * The view owned by the HPP Manager, which encapsulates the web view.
      */
     fileprivate var hppViewController: HPPViewController!
+
+    fileprivate var currentDataTask: URLSessionDataTask?
     
     open func setGenericDelegate<D: GenericHPPManagerDelegate>(_ delegate: D) where D.PaymentServiceResponse == T {
         self.genericDelegate = AnyGenericHPPManagerDelegate(delegate)
@@ -495,6 +501,26 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
 
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
 
+        retry(task: { [weak self] (taskCallback) in
+            self?.dataTask(hppResponse, callback: taskCallback)
+        }, finalCallback: { result in
+            switch result {
+            case .success(let decodedResponse):
+                self.delegate?.HPPManagerCompletedWithResult?(decodedResponse as! Dictionary <String, String>)
+                self.genericDelegate?.HPPManagerCompletedWithResult(decodedResponse)
+            case .failure(let error):
+                self.delegate?.HPPManagerFailedWithError!(error as NSError?)
+                self.genericDelegate?.HPPManagerFailedWithError(error)
+                self.hppViewController.dismiss(animated: true, completion: nil)
+            }
+        })
+
+    }
+
+    /**
+     Start a data task to make a network request to the HPP Response Consumer, with a completion callback.
+     */
+    private func dataTask(_ hppResponse: String, callback: @escaping DataTaskCallback) {
         let cachePolicy = URLRequest.CachePolicy.reloadIgnoringLocalCacheData
         var request = URLRequest(url: self.HPPResponseConsumerURL, cachePolicy: cachePolicy, timeoutInterval: 30.0)
 
@@ -507,28 +533,37 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         request.httpBody = parameters.data(using: String.Encoding.utf8)
 
         let session = URLSession.shared
-        let dataTask = session.dataTask(with: request, completionHandler: { (data:Data?, response:URLResponse?, error:Error?) -> Void in
-            
-            // Stop the spinner
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-
-            guard
-                let receivedData = data,
-                let decodedResponse = try? JSONDecoder().decode(T.self, from: receivedData)
-            else {
-                // error
-                self.delegate?.HPPManagerFailedWithError!(error as NSError?)
-                self.genericDelegate?.HPPManagerFailedWithError(error)
-                self.hppViewController.dismiss(animated: true, completion: nil)
-                return
+        currentDataTask = session.dataTask(with: request, completionHandler: { (data:Data?, response:URLResponse?, error:Error?) -> Void in
+            if let receivedData = data, let decodedResponse = try? JSONDecoder().decode(T.self, from: receivedData) {
+                callback(.success(decodedResponse))
+            } else {
+                callback(.failure(error!))
             }
-            
-            // success
-            self.delegate?.HPPManagerCompletedWithResult?(decodedResponse as! Dictionary <String, String>)
-            self.genericDelegate?.HPPManagerCompletedWithResult(decodedResponse)
         })
-        dataTask.resume()
+        currentDataTask?.resume()
+    }
 
+    /**
+     Retry mechanism for data tasks.
+     */
+    private func retry(times: Int = 4, delay: TimeInterval = 0.5, task: @escaping (@escaping DataTaskCallback) -> Void, finalCallback: @escaping DataTaskCallback) {
+        task() { [weak self] result in
+            self?.currentDataTask?.cancel()
+            switch result {
+            case .success(let decodedResponse):
+                finalCallback(.success(decodedResponse))
+                return
+            case .failure(let error):
+                if times <= 1 {
+                    self?.currentDataTask?.cancel()
+                    finalCallback(.failure(error))
+                    return
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: { [weak self] in
+                self?.retry(times: times - 1, delay: delay, task: task, finalCallback: finalCallback)
+            })
+        }
     }
 
 
