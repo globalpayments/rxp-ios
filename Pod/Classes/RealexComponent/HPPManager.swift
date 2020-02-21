@@ -547,6 +547,9 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      Retry mechanism for data tasks.
      */
     private func retry(times: Int = 4, delay: TimeInterval = 0.5, task: @escaping (@escaping DataTaskCallback) -> Void, finalCallback: @escaping DataTaskCallback) {
+        if times <= 0 {
+            return
+        }
         task() { [weak self] result in
             self?.currentDataTask?.cancel()
             switch result {
