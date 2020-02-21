@@ -444,10 +444,13 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
                 }
                 else {
                     // error
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
-                    self.delegate?.HPPManagerFailedWithError!(error! as NSError)
-                    self.genericDelegate?.HPPManagerFailedWithError(error)
-                    self.hppViewController.dismiss(animated: true, completion: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: { [weak self] in
+                        // Allow 0.5s for hppViewController to present, before dismissing
+                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                        self?.delegate?.HPPManagerFailedWithError!(error! as NSError)
+                        self?.genericDelegate?.HPPManagerFailedWithError(error)
+                        self?.hppViewController.dismiss(animated: true, completion: nil)
+                    })
                 }
 
             } catch {
@@ -547,8 +550,8 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      - parameter error: The error which occured.
      */
 
-    private func HPPViewControllerFailedWithError(_ error: Error?) {
-        self.delegate?.HPPManagerFailedWithError!(error as NSError?)
+    func HPPViewControllerFailedWithError(_ error: NSError?) {
+        self.delegate?.HPPManagerFailedWithError!(error)
         self.genericDelegate?.HPPManagerFailedWithError(error)
         self.hppViewController.dismiss(animated: true, completion: nil)
     }
