@@ -53,15 +53,29 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
      */
     fileprivate func initialiseWebView() {
 
-        let viewScriptString = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum- scale=1.0, user-scalable=no'); document.getElementsByTagName('head')[0].appendChild(meta);";
+        let viewScriptString = """
+        var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport');
+        meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum- scale=1.0, user-scalable=no');
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        """
         let viewScript = WKUserScript(source: viewScriptString, injectionTime: .atDocumentStart, forMainFrameOnly: true)
 
         let timeout = 5000
         let timeoutScriptString = """
         document.getElementById('rxp-primary-btn').addEventListener('click', function() {
-          setTimeout( function() {
-            window.webkit.messageHandlers.timeoutHandler.postMessage('timeout')
-        }, \(timeout));
+          // Create timeout callback
+          var timeoutCallback = function() {
+            setTimeout( function() {
+                window.webkit.messageHandlers.timeoutHandler.postMessage('timeout');
+            }, \(timeout));
+          }
+
+          // Wait 100ms to ensure primary button will have transitioned to disabled state
+          setTimeout(function() {
+            if (document.getElementById('rxp-primary-btn').disabled) {
+              timeoutCallback();
+            }
+          }, 100);
         });
         """
         let timeoutScript = WKUserScript(source: timeoutScriptString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
