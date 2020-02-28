@@ -56,6 +56,12 @@ fileprivate class AnyGenericHPPManagerDelegate<T: Decodable>: GenericHPPManagerD
     
 }
 
+// Used to handle nil errors in Result types
+enum ResultOptionalError<T: Any, Failure: Error> {
+    case success(T)
+    case failure(Failure?)
+}
+
 /// The main object the host app creates.
 /// A convenience payment manager for payment service responses that have a `[String: String]` structure
 open class HPPManager: GenericHPPManager<[String: String]> { }
@@ -67,7 +73,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
     /**
      * Callback for current running data task.
      */
-    typealias DataTaskCallback = ((Result<T, Error>) -> Void)
+    typealias DataTaskCallback = ((ResultOptionalError<T, Error>) -> Void)
 
     /**
      * The request producer which takes the request from the component and encodes it using the shared secret stored on the server side.
@@ -537,7 +543,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
             if let receivedData = data, let decodedResponse = try? JSONDecoder().decode(T.self, from: receivedData) {
                 callback(.success(decodedResponse))
             } else {
-                callback(.failure(error!))
+                callback(.failure(error))
             }
         })
         currentDataTask?.resume()
