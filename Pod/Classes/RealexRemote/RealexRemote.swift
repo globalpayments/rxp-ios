@@ -28,46 +28,34 @@ class RealexRemote: NSObject {
     - returns: Returns true if the card number is valid
     */
     class func validateCardNumber(_ cardNumber: String?) -> Bool {
+        guard let number = cardNumber else { return false }
 
-        if let number = cardNumber {
-
-            // test numeric and length between 12 and 19
-            let regex = "^\\d{12,19}$"
-            if number.range(of: regex, options: .regularExpression) == nil {
-                return false
-            }
-
-            // luhn check
-            var sum = 0;
-            var digit = 0;
-            var addend = 0;
-            var timesTwo = false;
-            let length = number.count - 1;
-
-            for i in (0...length).reversed() { 
-                digit = Int(number[number.index(number.startIndex, offsetBy: i) ..< number.index(number.startIndex, offsetBy: 2)])!
-
-                if (timesTwo) {
-                    addend = digit * 2;
-                    if (addend > 9) {
-                        addend -= 9;
-                    }
-                } else {
-                    addend = digit;
-                }
-                sum += addend;
-                timesTwo = !timesTwo;
-            }
-
-            let modulus = sum % 10;
-            if (modulus != 0) {
-                return false;
-            }
-
-            return true;
-
+        // test numeric and length between 12 and 19
+        let regex = "^\\d{12,19}$"
+        if number.range(of: regex, options: .regularExpression) == nil {
+            return false
         }
-        return false
+
+        // luhn check
+        var sum = 0
+        let digitStrings = number.reversed().map { String($0) }
+
+        for tuple in digitStrings.enumerated() {
+            if let digit = Int(tuple.element) {
+                let odd = tuple.offset % 2 == 1
+
+                switch (odd, digit) {
+                case (true, 9):
+                    sum += 9
+                case (true, 0...8):
+                    sum += (digit * 2) % 9
+                default:
+                    sum += digit
+                }
+            }
+        }
+
+        return sum % 10 == 0
     }
 
     /**
