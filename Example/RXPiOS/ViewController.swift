@@ -32,13 +32,15 @@ class ViewController: UIViewController, HPPManagerDelegate {
 		hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
         hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
 		hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
-		self.activityIndicator.isHidden = false
-
-		activityIndicator.startAnimating()
-		self.payButton.isEnabled = false
-		activityIndicator.hidesWhenStopped = true
+        hppManager.enableUserAgent = true
+        hppManager.lclHeaderValue = "test value"
         hppManager.delegate = self
         hppManager.presentViewInViewController(self)
+
+        activityIndicator.isHidden = false
+        activityIndicator.startAnimating()
+        activityIndicator.hidesWhenStopped = true
+        payButton.isEnabled = false
     }
 
 
