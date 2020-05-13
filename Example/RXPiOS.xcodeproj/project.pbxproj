@@ -13,6 +13,7 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		8261180B246C17D20043B474 /* URLSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82611809246C15C50043B474 /* URLSessionMock.swift */; };
 		A4F91BD0C6C85C04B6F245CA /* Pods_RXPiOS_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97C729E1379CD1BBC876ACED /* Pods_RXPiOS_Tests.framework */; };
 		B7E216C2D0073DB06899C9AB /* Pods_RXPiOS_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54AF315564EF42783BF98863 /* Pods_RXPiOS_Example.framework */; };
 /* End PBXBuildFile section */
@@ -46,6 +47,7 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		6FA1C65EC7DE73641B3E0F17 /* RXPiOS.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = RXPiOS.podspec; path = ../RXPiOS.podspec; sourceTree = "<group>"; };
 		7716D7BD2E5690DED2953CA3 /* Pods-RXPiOS_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RXPiOS_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-RXPiOS_Example/Pods-RXPiOS_Example.release.xcconfig"; sourceTree = "<group>"; };
+		82611809246C15C50043B474 /* URLSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionMock.swift; sourceTree = "<group>"; };
 		86F8034E5ADF876BA55456BE /* Pods-RXPiOS_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RXPiOS_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RXPiOS_Tests/Pods-RXPiOS_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		97C729E1379CD1BBC876ACED /* Pods_RXPiOS_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RXPiOS_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -116,6 +118,7 @@
 		607FACE81AFB9204008FA782 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				82611808246C15BC0043B474 /* Mocks */,
 				607FACEB1AFB9204008FA782 /* Tests.swift */,
 				607FACE91AFB9204008FA782 /* Supporting Files */,
 			);
@@ -148,6 +151,14 @@
 				97C729E1379CD1BBC876ACED /* Pods_RXPiOS_Tests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		82611808246C15BC0043B474 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				82611809246C15C50043B474 /* URLSessionMock.swift */,
+			);
+			name = Mocks;
 			sourceTree = "<group>";
 		};
 		F532DE3CCE378CAFCBBA2BDB /* Pods */ = {
@@ -355,6 +366,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACEC1AFB9204008FA782 /* Tests.swift in Sources */,
+				8261180B246C17D20043B474 /* URLSessionMock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
