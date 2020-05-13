@@ -274,7 +274,11 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      The initialiser which when HPPManager is created, also creaes and instance of the HPPViewController.
 
      */
-    override public init() {
+
+    private let session: URLSession
+
+    public init(session: URLSession = .shared) {
+        self.session = session
         super.init()
         self.hppViewController = HPPViewController()
         self.hppViewController.delegate = self
@@ -438,7 +442,6 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         }
         request.httpBody = self.getParametersString().data(using: String.Encoding.utf8)
 
-        let session = URLSession.shared
         let dataTask = session.dataTask(
             with: request,
             completionHandler: { data, response, error in
@@ -526,7 +529,6 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
 
         request.httpBody = parameters.data(using: String.Encoding.utf8)
 
-        let session = URLSession.shared
         let dataTask = session.dataTask(
             with: request,
             completionHandler: { data, response, error in
