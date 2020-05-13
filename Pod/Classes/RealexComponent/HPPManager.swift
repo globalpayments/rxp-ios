@@ -240,9 +240,9 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
     open var enableUserAgent: Bool! = false
 
     /**
-     * Used to customize X-LCL-Request header value
+     * Used to add additional headers and attach them to request
      */
-    open var lclHeaderValue: String?
+    open var additionalHeaders: [String: String]?
 
     /**
      * The HPPManager's delegate to receive the result of the interaction.
@@ -431,8 +431,10 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         if enableUserAgent {
             request.setValue(HPPHeader.Value.sdkName, forHTTPHeaderField: HPPHeader.Field.userAgent)
         }
-        if let lclHeaderValue = lclHeaderValue {
-            request.setValue(lclHeaderValue, forHTTPHeaderField: HPPHeader.Field.lclRequest)
+        if let additionalHeaders = additionalHeaders {
+            additionalHeaders.forEach {
+                request.setValue($0.value, forHTTPHeaderField: $0.key)
+            }
         }
         request.httpBody = self.getParametersString().data(using: String.Encoding.utf8)
 
@@ -486,8 +488,10 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         if enableUserAgent {
             request.setValue(HPPHeader.Value.sdkName, forHTTPHeaderField: HPPHeader.Field.userAgent)
         }
-        if let lclHeaderValue = lclHeaderValue {
-            request.setValue(lclHeaderValue, forHTTPHeaderField: HPPHeader.Field.lclRequest)
+        if let additionalHeaders = additionalHeaders {
+            additionalHeaders.forEach {
+                request.setValue($0.value, forHTTPHeaderField: $0.key)
+            }
         }
 
         self.hppViewController.loadRequest(request)
@@ -512,8 +516,10 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         if enableUserAgent {
             request.setValue(HPPHeader.Value.sdkName, forHTTPHeaderField: HPPHeader.Field.userAgent)
         }
-        if let lclHeaderValue = lclHeaderValue {
-            request.setValue(lclHeaderValue, forHTTPHeaderField: HPPHeader.Field.lclRequest)
+        if let additionalHeaders = additionalHeaders {
+            additionalHeaders.forEach {
+                request.setValue($0.value, forHTTPHeaderField: $0.key)
+            }
         }
 
         let parameters = "hppResponse=" + hppResponse
@@ -615,7 +621,6 @@ private struct HPPHeader {
         static let contentType = "Content-Type"
         static let accept = "Accept"
         static let userAgent = "User-Agent"
-        static let lclRequest = "X-LCL-Request"
     }
 
     struct Value {
