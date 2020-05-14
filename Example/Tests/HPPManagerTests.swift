@@ -2,7 +2,7 @@
 //  HPPManagerTests.swift
 //  RXPiOS_Tests
 //
-//  Copyright © 2020 realexpayments. All rights reserved.
+//  Copyright © 2020 GlobalPayments. All rights reserved.
 //
 
 import XCTest

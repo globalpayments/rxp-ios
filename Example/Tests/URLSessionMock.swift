@@ -2,7 +2,7 @@
 //  URLSessionMock.swift
 //  RXPiOS_Example
 //
-//  Copyright © 2020 realexpayments. All rights reserved.
+//  Copyright © 2020 GlobalPayments. All rights reserved.
 //
 
 import Foundation
