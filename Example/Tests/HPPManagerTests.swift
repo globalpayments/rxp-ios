@@ -25,27 +25,6 @@ class HPPManagerTests: XCTestCase {
         sut = nil
     }
 
-    func testHPPManagerShouldNotContainUserAgentHeaderField() {
-        // Given
-        let viewController = UIViewController()
-        // When
-        sut?.presentViewInViewController(viewController)
-        // Then
-        let request: URLRequest? = session.request
-        XCTAssertFalse((request?.allHTTPHeaderFields?.keys.contains("User-Agent"))!)
-    }
-
-    func testHPPManagerShouldContainUserAgentHeaderField() {
-        // Given
-        let viewController = UIViewController()
-        sut?.enableUserAgent = true
-        // When
-        sut?.presentViewInViewController(viewController)
-        // Then
-        let request: URLRequest? = session.request
-        XCTAssertTrue((request?.allHTTPHeaderFields?.keys.contains("User-Agent"))!)
-    }
-
     func testHPPManagerShouldNotContainAdditionalHeaders() {
         // Given
         let viewController = UIViewController()

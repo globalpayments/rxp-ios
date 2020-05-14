@@ -231,15 +231,6 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
     open var supplementaryData: Dictionary<String, String>! = [:]
 
     /**
-     * Used to add User-Agent header constant
-     *
-     * If set to true - the iOS library will add User-Agent header constant
-     *
-     * If set to false - the iOS library will't add User-Agent header constant
-     */
-    open var enableUserAgent: Bool! = false
-
-    /**
      * Used to add additional headers and attach them to request
      */
     open var additionalHeaders: [String: String]?
@@ -432,9 +423,6 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         request.httpMethod = "POST"
         request.setValue(HPPHeader.Value.xWWWFormUrlEncoded, forHTTPHeaderField: HPPHeader.Field.contentType)
         request.setValue(HPPHeader.Value.all, forHTTPHeaderField: HPPHeader.Field.accept)
-        if enableUserAgent {
-            request.setValue(HPPHeader.Value.sdkName, forHTTPHeaderField: HPPHeader.Field.userAgent)
-        }
         if let additionalHeaders = additionalHeaders {
             additionalHeaders.forEach {
                 request.setValue($0.value, forHTTPHeaderField: $0.key)
@@ -488,9 +476,6 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         request.httpBody = self.httpBodyWithJSON(self.HPPRequest)
         request.setValue(HPPHeader.Value.xWWWFormUrlEncoded, forHTTPHeaderField: HPPHeader.Field.contentType)
         request.setValue(HPPHeader.Value.text, forHTTPHeaderField: HPPHeader.Field.accept)
-        if enableUserAgent {
-            request.setValue(HPPHeader.Value.sdkName, forHTTPHeaderField: HPPHeader.Field.userAgent)
-        }
         if let additionalHeaders = additionalHeaders {
             additionalHeaders.forEach {
                 request.setValue($0.value, forHTTPHeaderField: $0.key)
@@ -516,9 +501,6 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         request.httpMethod = "POST"
         request.setValue(HPPHeader.Value.xWWWFormUrlEncoded, forHTTPHeaderField: HPPHeader.Field.contentType)
         request.setValue(HPPHeader.Value.all, forHTTPHeaderField: HPPHeader.Field.accept)
-        if enableUserAgent {
-            request.setValue(HPPHeader.Value.sdkName, forHTTPHeaderField: HPPHeader.Field.userAgent)
-        }
         if let additionalHeaders = additionalHeaders {
             additionalHeaders.forEach {
                 request.setValue($0.value, forHTTPHeaderField: $0.key)
@@ -622,13 +604,11 @@ private struct HPPHeader {
     struct Field {
         static let contentType = "Content-Type"
         static let accept = "Accept"
-        static let userAgent = "User-Agent"
     }
 
     struct Value {
         static let xWWWFormUrlEncoded = "application/x-www-form-urlencoded"
         static let text = "text/html"
         static let all = "*/*"
-        static let sdkName = "GP eCommerce SDK"
     }
 }

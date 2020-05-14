@@ -25,7 +25,6 @@ final class ViewController: UIViewController, HPPManagerDelegate {
         hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
         hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
         hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
-        hppManager.enableUserAgent = true
         hppManager.additionalHeaders = ["custom_header_1": "test param 1",
                                         "custom_header_2": "test param 2",
                                         "custom_header_3": "test param 3"]
