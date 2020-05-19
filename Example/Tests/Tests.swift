@@ -12,6 +12,7 @@ class rxp_iosTests: XCTestCase {
     
     func testValidateCardNumber() {
         XCTAssertTrue(RealexRemote.validateCardNumber("424242424242424242"), "valid card")
+        XCTAssertTrue(RealexRemote.validateCardNumber("4929939187355598"), "valid card")
         XCTAssertFalse(RealexRemote.validateCardNumber("a24242424242424242"), "non-numeric card")
         XCTAssertFalse(RealexRemote.validateCardNumber("4242 424242424242"), "card with spaces")
         XCTAssertFalse(RealexRemote.validateCardNumber(""), "empty card")
@@ -73,15 +74,16 @@ class rxp_iosTests: XCTestCase {
     }
     
     func testValidateExpiryDateNotInPast() {
+        XCTAssertFalse(RealexRemote.validateExpiryDateNotInPast(nil), "undefined date")
         XCTAssertFalse(RealexRemote.validateExpiryDateNotInPast("0615"), "date in past")
         
         let currentDate = Date()
         let calendar = Calendar.current
         let components = calendar.dateComponents([Calendar.Component.year, Calendar.Component.month], from: currentDate)
         var nowMonth = String(describing: components.month!)
-        nowMonth = nowMonth.characters.count < 2 ? "0" + nowMonth : nowMonth
+        nowMonth = nowMonth.count < 2 ? "0" + nowMonth : nowMonth
         let year = String(describing: components.year!)
-        let nowYear = year.substring(from: year.index(year.startIndex, offsetBy: 2))
+        let nowYear = String(year[year.index(year.startIndex, offsetBy: 2)...])
         let nowDate = nowMonth + nowYear
         
         XCTAssertTrue(RealexRemote.validateExpiryDateNotInPast(nowDate), "current month")

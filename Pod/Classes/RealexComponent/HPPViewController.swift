@@ -6,53 +6,40 @@
 import UIKit
 import WebKit
 
-/**
- *  THe delegate callbacks which allow the HPPManager to receive back the results from the webview.
- */
+/// The delegate callbacks which allow the HPPManager to receive back the results from the WKWebView.
 @objc protocol HPPViewControllerDelegate {
     @objc optional func HPPViewControllerWillDismiss()
-    @objc optional func HPPViewControllerCompletedWithResult(_ result: String);
-    @objc optional func HPPViewControllerFailedWithError(_ error: NSError?);
+    @objc optional func HPPViewControllerCompletedWithResult(_ result: String)
+    @objc optional func HPPViewControllerFailedWithError(_ error: NSError?)
 }
 
 /// The Web View Controller which encapsulates the management of the webivew and the interaction with the HPP web page.
-class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, WKScriptMessageHandler, UIWebViewDelegate {
-
-    @IBOutlet var containerView : UIView? = nil
+class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, WKScriptMessageHandler {
 
     var webView: WKWebView?
-    var legacyWebView: UIWebView?
-
     var delegate:HPPViewControllerDelegate?
 
-
-    /**
-     Initialise the correct webview for the OS version being run on.
-     */
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if #available(iOS 9.0, *) {
-            // use WKWebView on iOS 9.0 and later
-            self.initialiseWebView()
-        } else {
-            // use UIView
-            self.initaliseLegacyWebView()
-        }
+        initialiseWebView()
 
-        let cancelButton = UIBarButtonItem(title: "Cancel", style: UIBarButtonItemStyle.plain, target: self, action: #selector(HPPViewController.closeView))
-        self.navigationItem.leftBarButtonItem = cancelButton
-
+        let cancelButton = UIBarButtonItem(
+            title: "Cancel",
+            style: UIBarButtonItemStyle.plain,
+            target: self,
+            action: #selector(HPPViewController.closeView)
+        )
+        navigationItem.leftBarButtonItem = cancelButton
     }
 
-    /**
-     initialises the WKWebview.
-
-     */
+    /// Initialises the WKWebview.
     fileprivate func initialiseWebView() {
 
-        let viewScriptString = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);";
-        let viewScript = WKUserScript(source: viewScriptString, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+        let viewScriptString = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);"
+        let viewScript = WKUserScript(source: viewScriptString,
+                                      injectionTime: .atDocumentEnd,
+                                      forMainFrameOnly: true)
 
         let userContentController = WKUserContentController()
         userContentController.addUserScript(viewScript)
@@ -60,162 +47,103 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
 
         let configuration = WKWebViewConfiguration()
         configuration.userContentController = userContentController
-        self.webView = WKWebView(frame: self.view.bounds, configuration: configuration)
+        webView = WKWebView(frame: view.bounds, configuration: configuration)
+        webView?.backgroundColor = .white
 
-        self.webView?.navigationDelegate = self;
-        self.view = self.webView
+        webView?.navigationDelegate = self;
+        view = self.webView
     }
 
-    /**
-     Initalises UIWebview.
-
-     */
-    fileprivate func initaliseLegacyWebView() {
-
-        self.legacyWebView = UIWebView(frame: self.view.bounds)
-        self.legacyWebView?.delegate = self
-        self.view = self.legacyWebView
-
-    }
-
-    /**
-     Called if the user taps the cancel button.
-     */
+    /// Called if the user taps the cancel button.
     @objc func closeView() {
-        self.delegate?.HPPViewControllerWillDismiss!()
-        self.dismiss(animated: true, completion: nil)
+        delegate?.HPPViewControllerWillDismiss!()
+        dismiss(animated: true, completion: nil)
     }
 
-    /**
-     Loads the network request and displays the result in the webview.
-
-     - parameter request: The network request to be loaded.
-     */
+    /// Loads the network request and displays the result in the webview.
+    /// - Parameter request: The network request to be loaded.
     func loadRequest (_ request: URLRequest) {
+        let session = URLSession.shared
+        let dataTask = session.dataTask(
+            with: request,
+            completionHandler: { data, response, error in
 
-        if #available(iOS 9.0, *) {
-            //load request in new WKWebView
-            let session = URLSession.shared
-            let dataTask = session.dataTask(with: request, completionHandler: { (data:Data?, response:URLResponse?, error:Error?) -> Void in
+                DispatchQueue.main.async {
 
-                if error != nil {
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                    if error != nil {
+                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
 
-                    self.delegate?.HPPViewControllerFailedWithError!(error as NSError?)
-                    self.dismiss(animated: true, completion: nil)
+                        self.delegate?.HPPViewControllerFailedWithError!(error as NSError?)
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                    else if data?.count == 0 {
+                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
+
+                        self.delegate?.HPPViewControllerFailedWithError!(nil)
+                        self.dismiss(animated: true, completion: nil)
+                    }
+                    else {
+                        let htmlString = String(data: data!, encoding: String.Encoding.utf8)
+                        self.webView!.loadHTMLString(htmlString!, baseURL: request.url)
+                    }
                 }
-                else if data?.count == 0 {
-                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
-
-                    self.delegate?.HPPViewControllerFailedWithError!(nil)
-                    self.dismiss(animated: true, completion: nil)
-                }
-                else {
-                    let htmlString = String(data: data!, encoding: String.Encoding.utf8)
-                    self.webView!.loadHTMLString(htmlString!, baseURL: request.url)
-
-                }
-            })
-            dataTask.resume()
-        }
-        else {
-            //load request in legacy UIWebView
-            self.legacyWebView?.loadRequest(request)
-        }
+        })
+        dataTask.resume()
     }
 
+    // MARK: - WKWebView Delegate Callbacks
 
-    //MARK: - WKWebView Delegate Callbacks
-
-
-    /* Start the network activity indicator when the web view is loading */
+    /// Start the network activity indicator when the web view is loading
     func webView(_ webView: WKWebView,
-        didStartProvisionalNavigation navigation: WKNavigation){
-            // Start the network activity indicator when the web view is loading
-            UIApplication.shared.isNetworkActivityIndicatorVisible = true
+                 didStartProvisionalNavigation navigation: WKNavigation) {
+        // Start the network activity indicator when the web view is loading
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
 
-    /* Stop the network activity indicator when the loading finishes */
+    /// Stop the network activity indicator when the loading finishes
     func webView(_ webView: WKWebView,
-        didFinish navigation: WKNavigation){
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+                 didFinish navigation: WKNavigation) {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
 
-    /* Stop the network activity indicator when the loading fails and report back to HPPManager */
-    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+    /// Stop the network activity indicator when the loading fails and report back to HPPManager
+    func webView(_ webView: WKWebView,
+                 didFailProvisionalNavigation navigation: WKNavigation!,
+                 withError error: Error) {
+
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
         self.delegate?.HPPViewControllerFailedWithError!(error as NSError?)
     }
 
-    /* allow all requests to be loaded */
+    /// Allow all requests to be loaded
     func webView(_ webView: WKWebView,
-        decidePolicyFor navigationResponse: WKNavigationResponse,
-        decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void){
+                 decidePolicyFor navigationResponse: WKNavigationResponse,
+                 decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
 
-            decisionHandler(.allow)
-
+        decisionHandler(.allow)
     }
 
-    /* allow all navigation actions */
+    /// Allow all navigation actions
     func webView(_ webView: WKWebView,
-        decidePolicyFor navigationAction: WKNavigationAction,
-        decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+                 decidePolicyFor navigationAction: WKNavigationAction,
+                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
 
-            decisionHandler(.allow)
-
+        decisionHandler(.allow)
     }
 
-    //MARK: - Javascript Message Callback
+    // MARK: - Javascript Message Callback
 
-    /* Delegate callback which receives any massages from the Javascript bridge. */
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    /// Delegate callback which receives any massages from the Javascript bridge
+    func userContentController(_ userContentController: WKUserContentController,
+                               didReceive message: WKScriptMessage) {
 
         if let messageString = message.body as? String {
             self.delegate?.HPPViewControllerCompletedWithResult!(messageString)
-        }
-        else {
+        } else {
             print("Something went wrong")
             self.delegate?.HPPViewControllerFailedWithError!(nil)
         }
 
         self.dismiss(animated: true, completion: nil)
     }
-
-
-    //MARK: - Legacy UIWebView Delegate Callbacks
-
-
-    /* intercepts any URL load requests and checks the URL Scheme, if it is custom scheme 'callbackhandler' this is a message from the webpage and is reported back to the HPP Manager. */
-    func webView(_ webView: UIWebView,
-        shouldStartLoadWith request: URLRequest,
-        navigationType: UIWebViewNavigationType) -> Bool {
-
-            if (request.url?.scheme == "callbackhandler") {
-
-                let message = request.url?.host!.removingPercentEncoding
-                self.delegate?.HPPViewControllerCompletedWithResult!(message!)
-                self.dismiss(animated: true, completion: nil)
-            }
-            return true
-    }
-
-    /* Start the network activity indicator when the web view is loading */
-    func webViewDidStartLoad(_ webView: UIWebView) {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
-
-    }
-
-    /* Stop the network activity indicator when the loading finishes */
-    func webViewDidFinishLoad(_ webView: UIWebView) {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = false
-
-    }
-
-    /* Stop the network activity indicator when the loading fails and report back to HPPManager */
-    func webView(_ webView: UIWebView,
-        didFailLoadWithError error: Error) {
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
-            self.delegate?.HPPViewControllerFailedWithError!(error as NSError?)
-    }
-
 }

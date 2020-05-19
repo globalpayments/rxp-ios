@@ -8,23 +8,20 @@ import UIKit
  *  The delegate callbacks which allow the host app to receive all possible results form the component.
  */
 @objc public protocol HPPManagerDelegate {
-
     @objc optional func HPPManagerCompletedWithResult(_ result: Dictionary <String, String>);
     @objc optional func HPPManagerFailedWithError(_ error: NSError?);
     @objc optional func HPPManagerCancelled();
-
 }
 
 /**
  *  The delegate callbacks which allow the host app to receive all possible results from the component using a generic decodable type.
  */
 public protocol GenericHPPManagerDelegate: class {
-    
     associatedtype PaymentServiceResponse: Decodable
+
     func HPPManagerCompletedWithResult(_ result: PaymentServiceResponse)
     func HPPManagerFailedWithError(_ error: Error?)
     func HPPManagerCancelled()
-    
 }
 
 /**
@@ -53,7 +50,6 @@ fileprivate class AnyGenericHPPManagerDelegate<T: Decodable>: GenericHPPManagerD
     public func HPPManagerCancelled() {
         self.cancelled()
     }
-    
 }
 
 /// The main object the host app creates.
@@ -63,7 +59,6 @@ open class HPPManager: GenericHPPManager<[String: String]> { }
 /// The main object the host app creates.
 /// A payment manager that can decode payment service responses that have a generic structure
 open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
-
 
     /**
      * The request producer which takes the request from the component and encodes it using the shared secret stored on the server side.
@@ -83,34 +78,34 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
     /**
      * The merchant ID supplied by Realex Payments – note this is not the merchant number supplied by your bank.
      */
-    open var merchantId:String! = ""
+    open var merchantId: String! = ""
 
     /**
      * The sub-account to use for this transaction. If not present, the default sub-account will be used.
      */
-    open var account:String! = ""
+    open var account: String! = ""
 
     /**
      * A unique alphanumeric id that’s used to identify the transaction. No spaces are allowed.
      */
-    open var orderId:String! = ""
+    open var orderId: String! = ""
 
     /**
      * Total amount to authorise in the lowest unit of the currency – i.e. 100 euro would be entered as 10000.
      * If there is no decimal in the currency (e.g. JPY Yen) then contact Realex Payments. No decimal points are allowed.
      * Amount should be set to 0 for OTB transactions (i.e. where validate card only is set to 1).
      */
-    open var amount:String! = ""
+    open var amount: String! = ""
 
     /**
      * A three-letter currency code (Eg. EUR, GBP). A list of currency codes can be provided by your account manager.
      */
-    open var currency:String! = ""
+    open var currency: String! = ""
 
     /**
      * Date and time of the transaction. Entered in the following format: YYYYMMDDHHMMSS. Must be within 24 hours of the current time.
      */
-    open var timestamp:String! = ""
+    open var timestamp: String! = ""
 
     /**
      * Used to signify whether or not you wish the transaction to be captured in the next batch.
@@ -119,124 +114,131 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      * This option can be used if a merchant wishes to delay the payment until after the goods have been shipped.
      * Transactions can be settled for up to 115% of the original amount and must be settled within a certain period of time agreed with your issuing bank.
      */
-    open var autoSettleFlag:String! = ""
+    open var autoSettleFlag: String! = ""
 
     /**
      * A freeform comment to describe the transaction.
      */
-    open var commentOne:String! = ""
+    open var commentOne: String! = ""
 
     /**
      * A freeform comment to describe the transaction.
      */
-    open var commentTwo:String! = ""
+    open var commentTwo: String! = ""
 
     /**
      * Used to signify whether or not you want a Transaction Suitability Score for this transaction.
      * Can be "0" for no and "1" for yes.
      */
-    open var returnTss:String! = ""
+    open var returnTss: String! = ""
 
     /**
      * The postcode or ZIP of the shipping address.
      */
-    open var shippingCode:String! = ""
+    open var shippingCode: String! = ""
 
     /**
      * The country of the shipping address.
      */
-    open var shippingCountry:String! = ""
+    open var shippingCountry: String! = ""
 
     /**
      * The postcode or ZIP of the billing address.
      */
-    open var billingCode:String! = ""
+    open var billingCode: String! = ""
 
     /**
      * The country of the billing address.
      */
-    open var billingCountry:String! = ""
+    open var billingCountry: String! = ""
 
     /**
      * The customer number of the customer. You can send in any additional information about the transaction in this field,
      * which will be visible under the transaction in the RealControl application.
      */
-    open var customerNumber:String! = ""
+    open var customerNumber: String! = ""
 
     /**
      * A variable reference also associated with this customer. You can send in any additional information about the transaction in this field,
      * which will be visible under the transaction in the RealControl application.
      */
-    open var variableReference:String! = ""
+    open var variableReference: String! = ""
 
     /**
      * A product id associated with this product. You can send in any additional information about the transaction in this field,
      * which will be visible under the transaction in the RealControl application.
      */
-    open var productId:String! = ""
+    open var productId: String! = ""
 
     /**
      * Used to set what language HPP is displayed in. Currently HPP is available in English, Spanish and German, with other languages to follow.
      * If the field is not sent in, the default language is the language that is set in your account configuration. This can be set by your account manager.
      */
-    open var language:String! = ""
+    open var language: String! = ""
 
     /**
      * Used to set what text is displayed on the payment button for card transactions. If this field is not sent in, "Pay Now" is displayed on the button by default.
      */
-    open var cardPaymentButtonText:String! = ""
+    open var cardPaymentButtonText: String! = ""
 
     /**
      * Enable card storage.
      */
-    open var cardStorageEnable:String! = ""
+    open var cardStorageEnable: String! = ""
 
     /**
      * Offer to save the card.
      */
-    open var offerSaveCard:String! = ""
+    open var offerSaveCard: String! = ""
 
     /**
      * The payer reference.
      */
-    open var payerReference:String! = ""
+    open var payerReference: String! = ""
 
     /**
      * The payment reference.
      */
-    open var paymentReference:String! = ""
+    open var paymentReference: String! = ""
 
     /**
      * Flag to indicate if the payer exists.
      */
-    open var payerExists:String! = ""
+    open var payerExists: String! = ""
 
     /**
      * Used to identify an OTB transaction.
      */
-    open var validateCardOnly:String! = ""
+    open var validateCardOnly: String! = ""
 
     /**
-	* Used to check HppRequest base64 encoding.
-	If set to true - the iOS library should decode the Base64 encoded values in the HPP request JSON
-
-	If set to false - the iOS library should just leave the values alone
+	 * Used to check HppRequest base64 encoding.
+     *
+	 * If set to true - the iOS library should decode the Base64 encoded values in the HPP request JSON
+     *
+     * If set to false - the iOS library should just leave the values alone
      */
-    open var isEncoded:Bool! = false
-	/**
-	* Transaction level configuration to enable/disable a DCC request. (Only if the merchant is configured).
-	*/
-	open var dccEnable:String! = ""
+    open var isEncoded: Bool! = false
+
+    /**
+     * Transaction level configuration to enable/disable a DCC request. (Only if the merchant is configured).
+     */
+    open var dccEnable: String! = ""
 
     /**
      * Supplementary data to be sent to Realex Payments. This will be returned in the HPP response.
      */
-    open var supplementaryData:Dictionary<String, String>! = [:]
+    open var supplementaryData: Dictionary<String, String>! = [:]
+
+    /**
+     * Used to add additional headers and attach them to request
+     */
+    open var additionalHeaders: [String: String]?
 
     /**
      * The HPPManager's delegate to receive the result of the interaction.
      */
-    open weak var delegate:HPPManagerDelegate?
+    open weak var delegate: HPPManagerDelegate?
     
     /**
      * The HPPManager's generic delegate to receive the result of the interaction.
@@ -263,7 +265,11 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
      The initialiser which when HPPManager is created, also creaes and instance of the HPPViewController.
 
      */
-    override public init() {
+
+    private let session: URLSession
+
+    public init(session: URLSession = .shared) {
+        self.session = session
         super.init()
         self.hppViewController = HPPViewController()
         self.hppViewController.delegate = self
@@ -279,6 +285,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         if  self.HPPRequestProducerURL.absoluteString != "" {
             self.getHPPRequest()
             let navigationController = UINavigationController(rootViewController: self.hppViewController)
+            navigationController.modalPresentationStyle = .fullScreen
             viewController.present(navigationController, animated: true, completion: nil)
         } else {
             // error
@@ -333,7 +340,6 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         if self.timestamp != "" {
             parameters["TIMESTAMP"] = self.timestamp
         }
-
         if self.autoSettleFlag != "" {
             parameters["AUTO_SETTLE_FLAG"] = self.autoSettleFlag
         }
@@ -370,7 +376,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         if self.language != "" {
             parameters["HPP_LANG"] = self.language
         }
-		if self.cardPaymentButtonText != "" {
+        if self.cardPaymentButtonText != "" {
             parameters["CARD_PAYMENT_BUTTON"] = self.cardPaymentButtonText
         }
         if self.cardStorageEnable != "" {
@@ -395,14 +401,11 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
             parameters["DCC_ENABLE"] = self.dccEnable
         }
 
-
         if  self.supplementaryData != [:] {
             for (key,value) in self.supplementaryData {
                 parameters.updateValue(value, forKey:key)
             }
         }
-
-        //print("Request parameters: \n" + parameters.description)
 
         return parameters.stringFromHttpParameters()
     }
@@ -414,44 +417,47 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
 
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
 
-        let cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
-		let request: NSMutableURLRequest = NSMutableURLRequest(url: self.HPPRequestProducerURL, cachePolicy: cachePolicy, timeoutInterval: 30.0)
+        var request = URLRequest(url: self.HPPRequestProducerURL,
+                                 cachePolicy: .reloadIgnoringLocalCacheData,
+                                 timeoutInterval: 30.0)
 
-		request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.setValue("*/*", forHTTPHeaderField: "Accept")
+        request.httpMethod = "POST"
+        request.setValue(HPPHeader.Value.xWWWFormUrlEncoded, forHTTPHeaderField: HPPHeader.Field.contentType)
+        request.setValue(HPPHeader.Value.all, forHTTPHeaderField: HPPHeader.Field.accept)
+        if let additionalHeaders = additionalHeaders {
+            additionalHeaders.forEach {
+                request.setValue($0.value, forHTTPHeaderField: $0.key)
+            }
+        }
         request.httpBody = self.getParametersString().data(using: String.Encoding.utf8)
 
+        let dataTask = session.dataTask(
+            with: request,
+            completionHandler: { data, response, error in
 
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request as URLRequest, completionHandler: { (data:Data?, response:URLResponse?, error:Error?) -> Void in
-            do {
-                if let receivedData = data {
-                    // success
-                    self.HPPRequest = try JSONSerialization.jsonObject(with: receivedData, options: []) as? NSDictionary
-					//	let hppMutableRequest = NSMutableDictionary.init(dictionary: self.HPPRequest)
-					if (self.isEncoded == true)
-					{
-						self.HPPRequest = self.HPPRequest.DecodeAllValues()
-					}
-
-                    self.getPaymentForm()
-                }
-                else {
-                    // error
+                DispatchQueue.main.async {
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
-                    self.delegate?.HPPManagerFailedWithError!(error! as NSError)
-                    self.genericDelegate?.HPPManagerFailedWithError(error)
-                    self.hppViewController.dismiss(animated: true, completion: nil)
+                    do {
+                        if let receivedData = data {
+                            // success
+                            self.HPPRequest = try JSONSerialization.jsonObject(with: receivedData, options: []) as? NSDictionary
+                            if (self.isEncoded == true) {
+                                self.HPPRequest = self.HPPRequest.decodeAllValues()
+                            }
+                            self.getPaymentForm()
+                        } else {
+                            // error
+                            self.delegate?.HPPManagerFailedWithError!(error! as NSError)
+                            self.genericDelegate?.HPPManagerFailedWithError(error)
+                            self.hppViewController.dismiss(animated: true, completion: nil)
+                        }
+                    } catch {
+                        // error
+                        self.delegate?.HPPManagerFailedWithError!(error as NSError)
+                        self.genericDelegate?.HPPManagerFailedWithError(error)
+                        self.hppViewController.dismiss(animated: true, completion: nil)
+                    }
                 }
-
-            } catch {
-                // error
-                UIApplication.shared.isNetworkActivityIndicatorVisible = false
-                self.delegate?.HPPManagerFailedWithError!(error as NSError)
-                self.genericDelegate?.HPPManagerFailedWithError(error)
-                self.hppViewController.dismiss(animated: true, completion: nil)
-            }
         })
         dataTask.resume()
     }
@@ -463,19 +469,21 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
 
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
 
-        let cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
-        let request = NSMutableURLRequest(url: self.HPPURL, cachePolicy: cachePolicy, timeoutInterval: 30.0)
+        var request = URLRequest(url: self.HPPURL,
+                                 cachePolicy: .reloadIgnoringLocalCacheData,
+                                 timeoutInterval: 30.0)
 
         request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.setValue("text/html", forHTTPHeaderField: "Accept")
         request.httpBody = self.httpBodyWithJSON(self.HPPRequest)
+        request.setValue(HPPHeader.Value.xWWWFormUrlEncoded, forHTTPHeaderField: HPPHeader.Field.contentType)
+        request.setValue(HPPHeader.Value.text, forHTTPHeaderField: HPPHeader.Field.accept)
+        if let additionalHeaders = additionalHeaders {
+            additionalHeaders.forEach {
+                request.setValue($0.value, forHTTPHeaderField: $0.key)
+            }
+        }
 
-
-        //print("Request: \n" + (request.URL?.absoluteString)!)
-
-        self.hppViewController.loadRequest(request as URLRequest)
-
+        self.hppViewController.loadRequest(request)
     }
 
     /**
@@ -487,52 +495,55 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
 
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
 
-        let cachePolicy = URLRequest.CachePolicy.reloadIgnoringLocalCacheData
-        var request = URLRequest(url: self.HPPResponseConsumerURL, cachePolicy: cachePolicy, timeoutInterval: 30.0)
+        var request = URLRequest(url: self.HPPResponseConsumerURL,
+                                 cachePolicy: .reloadIgnoringLocalCacheData,
+                                 timeoutInterval: 30.0)
 
         request.httpMethod = "POST"
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.setValue("*/*", forHTTPHeaderField: "Accept")
+        request.setValue(HPPHeader.Value.xWWWFormUrlEncoded, forHTTPHeaderField: HPPHeader.Field.contentType)
+        request.setValue(HPPHeader.Value.all, forHTTPHeaderField: HPPHeader.Field.accept)
+        if let additionalHeaders = additionalHeaders {
+            additionalHeaders.forEach {
+                request.setValue($0.value, forHTTPHeaderField: $0.key)
+            }
+        }
 
         let parameters = "hppResponse=" + hppResponse
 
         request.httpBody = parameters.data(using: String.Encoding.utf8)
 
-        let session = URLSession.shared
-        let dataTask = session.dataTask(with: request, completionHandler: { (data:Data?, response:URLResponse?, error:Error?) -> Void in
-            
-            // Stop the spinner
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+        let dataTask = session.dataTask(
+            with: request,
+            completionHandler: { data, response, error in
 
-            guard
-                let receivedData = data,
-                let decodedResponse = try? JSONDecoder().decode(T.self, from: receivedData)
-            else {
-                // error
-                self.delegate?.HPPManagerFailedWithError!(error as NSError?)
-                self.genericDelegate?.HPPManagerFailedWithError(error)
-                self.hppViewController.dismiss(animated: true, completion: nil)
-                return
-            }
-            
-            // success
-            self.delegate?.HPPManagerCompletedWithResult?(decodedResponse as! Dictionary <String, String>)
-            self.genericDelegate?.HPPManagerCompletedWithResult(decodedResponse)
+                DispatchQueue.main.async {
+                    // Stop the spinner
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
+
+                    guard let receivedData = data,
+                        let decodedResponse = try? JSONDecoder().decode(T.self, from: receivedData) else {
+                            // error
+                            self.delegate?.HPPManagerFailedWithError!(error as NSError?)
+                            self.genericDelegate?.HPPManagerFailedWithError(error)
+                            self.hppViewController.dismiss(animated: true, completion: nil)
+                            return
+                    }
+                    // success
+                    self.delegate?.HPPManagerCompletedWithResult?(decodedResponse as! [String: String])
+                    self.genericDelegate?.HPPManagerCompletedWithResult(decodedResponse)
+                }
         })
         dataTask.resume()
-
     }
 
-
-    //MARK: - HPPViewControllerDelegate
+    // MARK: - HPPViewControllerDelegate
 
     /**
-    The delegate callback made by the HPP View controller when the interaction with HPP completes successfully.
+     The delegate callback made by the HPP View controller when the interaction with HPP completes successfully.
 
-    - parameter hppResponse: The response the webview received from HPP.
-    */
+     - parameter hppResponse: The response the webview received from HPP.
+     */
     func HPPViewControllerCompletedWithResult(_ hppResponse: String) {
-
         self.decodeHPPResponse(hppResponse);
     }
 
@@ -555,44 +566,50 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         self.delegate?.HPPManagerCancelled!()
         self.genericDelegate?.HPPManagerCancelled()
     }
-
 }
+
 extension NSDictionary {
-	//: ### Base64 encoding a string
+    /// Decoded array values in Base64
+    func decodeAllValues() -> NSMutableDictionary {
+        let dict: NSMutableDictionary! = NSMutableDictionary(capacity: self.count)
 
-	func DecodeAllValues() -> NSMutableDictionary
-	{
-		let dic: NSMutableDictionary! = NSMutableDictionary.init(capacity: self.count)
-		for value in self {
-			if (value.value as? String) != ""
-			{
-				dic[value.key] = (value.value as?String)?.base64Decoded()
+        for value in self {
+            if (value.value as? String) != "" {
+                dict[value.key] = (value.value as?String)?.base64Decoded()
+            } else {
+                dict[value.key] = value.value
+            }
+        }
 
-			}
-			else{
-				dic[value.key] = value.value
-
-			}
-		}
-
-		return dic
-	}
-
+        return dict
+    }
 }
-extension String
-{
-	func base64Encoded() -> String? {
-		if let data = self.data(using: .utf8) {
-			return data.base64EncodedString()
-		}
-		return nil
-	}
 
-	//: ### Base64 decoding a string
-	func base64Decoded() -> String? {
-		if let data = Data(base64Encoded: self) {
-			return String(data: data, encoding: .utf8)
-		}
-		return nil
-	}
+extension String {
+
+    /// Encoded string in Base64
+    func base64Encoded() -> String? {
+        guard let data = self.data(using: .utf8) else { return nil }
+        return data.base64EncodedString()
+    }
+
+    /// Encoded string in Base64
+    func base64Decoded() -> String? {
+        guard let data = Data(base64Encoded: self) else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+}
+
+private struct HPPHeader {
+
+    struct Field {
+        static let contentType = "Content-Type"
+        static let accept = "Accept"
+    }
+
+    struct Value {
+        static let xWWWFormUrlEncoded = "application/x-www-form-urlencoded"
+        static let text = "text/html"
+        static let all = "*/*"
+    }
 }

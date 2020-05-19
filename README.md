@@ -3,7 +3,7 @@ You can find more information on how to use this library and sign up for a free 
 
 ## Requirements
 
-- iOS 8.0+
+- iOS 9.0+
 - Xcode 7.1.1+
 
 ## Installation
