@@ -285,6 +285,7 @@ open class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPView
         if  self.HPPRequestProducerURL.absoluteString != "" {
             self.getHPPRequest()
             let navigationController = UINavigationController(rootViewController: self.hppViewController)
+            navigationController.modalPresentationStyle = .fullScreen
             viewController.present(navigationController, animated: true, completion: nil)
         } else {
             // error
