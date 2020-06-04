@@ -26,7 +26,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
 
         let cancelButton = UIBarButtonItem(
             title: "Cancel",
-            style: UIBarButtonItemStyle.plain,
+            style: UIBarButtonItem.Style.plain,
             target: self,
             action: #selector(HPPViewController.closeView)
         )
