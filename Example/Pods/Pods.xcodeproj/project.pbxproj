@@ -246,9 +246,9 @@
 		F5C381FAE81F3CA7F1435F6C24D8714E /* RealexComponent */ = {
 			isa = PBXGroup;
 			children = (
-				CB345DA13B2E0DECBD1E60C5B14BD751 /* Dictionary+URLDictionary.swift */,
 				5BB25B3C5C2F638B69D812F4E3E2BE5E /* HPPManager.swift */,
 				77D5FC50A0B1F972C378926DC23FB565 /* HPPViewController.swift */,
+				CB345DA13B2E0DECBD1E60C5B14BD751 /* Dictionary+URLDictionary.swift */,
 				45EEEF24C369C92C325ABB4500C99177 /* String+URLString.swift */,
 			);
 			name = RealexComponent;

@@ -34,7 +34,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     }
 
     /// Initialises the WKWebview.
-    fileprivate func initialiseWebView() {
+    private func initialiseWebView() {
 
         let viewScriptString = "var meta = document.createElement('meta'); meta.setAttribute('name', 'viewport'); meta.setAttribute('content', 'width=device-width'); document.getElementsByTagName('head')[0].appendChild(meta);"
         let viewScript = WKUserScript(source: viewScriptString,
@@ -51,7 +51,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
         webView?.backgroundColor = .white
 
         webView?.navigationDelegate = self;
-        view = self.webView
+        view = webView
     }
 
     /// Called if the user taps the cancel button.
@@ -112,7 +112,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
                  withError error: Error) {
 
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        self.delegate?.HPPViewControllerFailedWithError!(error as NSError?)
+        delegate?.HPPViewControllerFailedWithError!(error as NSError?)
     }
 
     /// Allow all requests to be loaded
@@ -138,12 +138,11 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
                                didReceive message: WKScriptMessage) {
 
         if let messageString = message.body as? String {
-            self.delegate?.HPPViewControllerCompletedWithResult!(messageString)
+            delegate?.HPPViewControllerCompletedWithResult!(messageString)
         } else {
-            print("Something went wrong")
-            self.delegate?.HPPViewControllerFailedWithError!(nil)
+            delegate?.HPPViewControllerFailedWithError!(nil)
         }
 
-        self.dismiss(animated: true, completion: nil)
+        dismiss(animated: true, completion: nil)
     }
 }

@@ -96,7 +96,7 @@ class RealexRemote: NSObject {
         let components = (Calendar.current as NSCalendar).components([NSCalendar.Unit.year, NSCalendar.Unit.month], from: Date())
         guard let currentMonth = components.month else { return false }
         guard let currentYear = components.year else { return false }
-        
+
         if (year < (currentYear % 100)) {
             return false;
         } else if (year == (currentYear % 100) && month < currentMonth) {
