@@ -53,7 +53,7 @@ public class HPPManager: GenericHPPManager<[String: String]> { }
 
 /// The main object the host app creates.
 /// A payment manager that can decode payment service responses that have a generic structure
-public class GenericHPPManager<T: Decodable>: NSObject, UIWebViewDelegate, HPPViewControllerDelegate {
+public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegate {
 
     /// The request producer which takes the request from the component and encodes it using the shared secret stored on the server side.
     @objc public var HPPRequestProducerURL: URL!
