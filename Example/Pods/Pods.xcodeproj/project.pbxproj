@@ -11,6 +11,7 @@
 		624C3EAC9183A589AAD2E10A02E0903B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
 		6B79363FBA9238EC1F8031C02713E2A5 /* String+URLString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EEEF24C369C92C325ABB4500C99177 /* String+URLString.swift */; };
 		6C7AFDFBF51BEE3E18FD86760DD58068 /* RXPiOS-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 04A0CDDA7A8FD55FCA40A9901ADA833B /* RXPiOS-dummy.m */; };
+		82C2ECDD25E3DB3100010903 /* NSDictionary+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82C2ECDC25E3DB3100010903 /* NSDictionary+Decoding.swift */; };
 		8DFF5BB4282D530ABC8F89B2ED721AF9 /* Pods-RXPiOS_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1FD276455632B9BEDB9718C5A71A75AE /* Pods-RXPiOS_Example-dummy.m */; };
 		92BA96C0AAD4B3CC529C9B26200A80F4 /* Pods-RXPiOS_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 46579181EAB80B5A08140F7D8A7E02CD /* Pods-RXPiOS_Tests-dummy.m */; };
 		996D9FA42407E8CF5A072907E591E516 /* Dictionary+URLDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB345DA13B2E0DECBD1E60C5B14BD751 /* Dictionary+URLDictionary.swift */; };
@@ -64,6 +65,7 @@
 		6B22550C91DF7E95485DCA245351EEC1 /* Pods-RXPiOS_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-RXPiOS_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		77D5FC50A0B1F972C378926DC23FB565 /* HPPViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = HPPViewController.swift; sourceTree = "<group>"; };
 		826A9B8083902E5376B4E0D35EE2A070 /* Pods-RXPiOS_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-RXPiOS_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		82C2ECDC25E3DB3100010903 /* NSDictionary+Decoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSDictionary+Decoding.swift"; sourceTree = "<group>"; };
 		942300FD74BF6B5FADB1D770214DDB8F /* Pods_RXPiOS_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RXPiOS_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A82905F0C0840BC9AAF8C3338A3FA1A9 /* Pods-RXPiOS_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-RXPiOS_Example-umbrella.h"; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				77D5FC50A0B1F972C378926DC23FB565 /* HPPViewController.swift */,
 				CB345DA13B2E0DECBD1E60C5B14BD751 /* Dictionary+URLDictionary.swift */,
 				45EEEF24C369C92C325ABB4500C99177 /* String+URLString.swift */,
+				82C2ECDC25E3DB3100010903 /* NSDictionary+Decoding.swift */,
 			);
 			name = RealexComponent;
 			path = Pod/Classes/RealexComponent;
@@ -412,6 +415,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82C2ECDD25E3DB3100010903 /* NSDictionary+Decoding.swift in Sources */,
 				996D9FA42407E8CF5A072907E591E516 /* Dictionary+URLDictionary.swift in Sources */,
 				3B90790EA5CF640457217AA02343C820 /* HPPManager.swift in Sources */,
 				B8465EC2F88787193926E8F894146AA4 /* HPPViewController.swift in Sources */,

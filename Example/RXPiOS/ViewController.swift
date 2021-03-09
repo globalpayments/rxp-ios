@@ -1,16 +1,11 @@
-//
-//  ViewController.swift
-//  RXPiOS
-//
-
 import UIKit
 import RXPiOS
 
 final class ViewController: UIViewController, HPPManagerDelegate {
 
-    @IBOutlet weak var result_textView: UITextView!
-    @IBOutlet weak var payButton: UIButton!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet private weak var result_textView: UITextView!
+    @IBOutlet private weak var payButton: UIButton!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,14 +24,17 @@ final class ViewController: UIViewController, HPPManagerDelegate {
                                         "custom_header_2": "test param 2",
                                         "custom_header_3": "test param 3"]
         hppManager.delegate = self
-        hppManager.presentViewInViewController(self)
+        setLoadingState()
 
+        hppManager.presentViewInViewController(self)
+    }
+
+    private func setLoadingState() {
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
         activityIndicator.hidesWhenStopped = true
         payButton.isEnabled = false
     }
-
 
     //MARK: - HPPManagerDelegate
 
@@ -59,7 +57,7 @@ final class ViewController: UIViewController, HPPManagerDelegate {
     func displayResult(result: String) {
         self.result_textView.text = NSString(format: "%@", result) as String
         self.result_textView.textAlignment = .left
-        self.activityIndicator.stopAnimating();
-        self.payButton.isEnabled = true;
+        self.activityIndicator.stopAnimating()
+        self.payButton.isEnabled = true
     }
 }

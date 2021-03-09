@@ -1,8 +1,3 @@
-//
-//  HPPViewController.swift
-//  rxp-ios
-//
-
 import UIKit
 import WebKit
 
@@ -49,8 +44,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
         configuration.userContentController = userContentController
         webView = WKWebView(frame: view.bounds, configuration: configuration)
         webView?.backgroundColor = .white
-
-        webView?.navigationDelegate = self;
+        webView?.navigationDelegate = self
         view = webView
     }
 
@@ -69,25 +63,19 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
             completionHandler: { data, response, error in
 
                 DispatchQueue.main.async {
-
+                    UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     if error != nil {
-                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
-
                         self.delegate?.HPPViewControllerFailedWithError!(error as NSError?)
                         self.dismiss(animated: true, completion: nil)
-                    }
-                    else if data?.count == 0 {
-                        UIApplication.shared.isNetworkActivityIndicatorVisible = false
-
+                    } else if data?.count == 0 {
                         self.delegate?.HPPViewControllerFailedWithError!(nil)
                         self.dismiss(animated: true, completion: nil)
-                    }
-                    else {
+                    } else {
                         let htmlString = String(data: data!, encoding: String.Encoding.utf8)
-                        self.webView!.loadHTMLString(htmlString!, baseURL: request.url)
+                        self.webView?.loadHTMLString(htmlString!, baseURL: request.url)
                     }
                 }
-        })
+            })
         dataTask.resume()
     }
 

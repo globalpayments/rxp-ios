@@ -1,8 +1,3 @@
-//
-//  String+URLString.swift
-//  rxp-ios
-//
-
 import Foundation
 
 extension String {
