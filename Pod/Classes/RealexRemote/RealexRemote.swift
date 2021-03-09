@@ -1,8 +1,3 @@
-//
-//  RealexRemote.swift
-//  rxp-ios
-//
-
 import UIKit
 
 private enum RegexRules: String {
@@ -98,9 +93,9 @@ class RealexRemote: NSObject {
         guard let currentYear = components.year else { return false }
 
         if (year < (currentYear % 100)) {
-            return false;
+            return false
         } else if (year == (currentYear % 100) && month < currentMonth) {
-            return false;
+            return false
         }
         return true
     }

@@ -197,7 +197,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
             self.genericDelegate?.HPPManagerFailedWithError(error)
             return
         }
-        self.getHPPRequest()
+        getHPPRequest()
         let navigationController = UINavigationController(rootViewController: self.hppViewController)
         navigationController.modalPresentationStyle = .fullScreen
         viewController.present(navigationController, animated: true, completion: nil)
@@ -223,85 +223,32 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
     /// - Returns: The HTML string representation of the HPP paramaters which have been set.
     private func getParametersString() -> String {
         var parameters = [String: String]()
-
-        if self.merchantId != "" {
-            parameters["MERCHANT_ID"] = self.merchantId
-        }
-        if self.account != "" {
-            parameters["ACCOUNT"] = self.account
-        }
-        if self.orderId != "" {
-            parameters["ORDER_ID"] = self.orderId
-        }
-        if self.amount != "" {
-            parameters["AMOUNT"] = self.amount
-        }
-        if self.currency != "" {
-            parameters["CURRENCY"] = self.currency
-        }
-        if self.timestamp != "" {
-            parameters["TIMESTAMP"] = self.timestamp
-        }
-        if self.autoSettleFlag != "" {
-            parameters["AUTO_SETTLE_FLAG"] = self.autoSettleFlag
-        }
-        if self.commentOne != "" {
-            parameters["COMMENT1"] = self.commentOne
-        }
-        if self.commentTwo != "" {
-            parameters["COMMENT2"] = self.commentTwo
-        }
-        if self.returnTss != "" {
-            parameters["RETURN_TSS"] = self.returnTss
-        }
-        if self.shippingCode != "" {
-            parameters["SHIPPING_CODE"] = self.shippingCode
-        }
-        if self.shippingCountry != "" {
-            parameters["SHIPPING_CO"] = self.shippingCountry
-        }
-        if self.billingCode != "" {
-            parameters["BILLING_CODE"] = self.billingCode
-        }
-        if self.billingCountry != "" {
-            parameters["BILLING_CO"] = self.billingCountry
-        }
-        if self.customerNumber != "" {
-            parameters["CUST_NUM"] = self.customerNumber
-        }
-        if self.variableReference != "" {
-            parameters["VAR_REF"] = self.variableReference
-        }
-        if self.productId != "" {
-            parameters["PROD_ID"] = self.productId
-        }
-        if self.language != "" {
-            parameters["HPP_LANG"] = self.language
-        }
-        if self.cardPaymentButtonText != "" {
-            parameters["CARD_PAYMENT_BUTTON"] = self.cardPaymentButtonText
-        }
-        if self.cardStorageEnable != "" {
-            parameters["CARD_STORAGE_ENABLE"] = self.cardStorageEnable
-        }
-        if self.offerSaveCard != "" {
-            parameters["OFFER_SAVE_CARD"] = self.offerSaveCard
-        }
-        if self.payerReference != "" {
-            parameters["PAYER_REF"] = self.payerReference
-        }
-        if self.paymentReference != "" {
-            parameters["PMT_REF"] = self.paymentReference
-        }
-        if self.payerExists != "" {
-            parameters["PAYER_EXIST"] = self.payerExists
-        }
-        if self.validateCardOnly != "" {
-            parameters["VALIDATE_CARD_ONLY"] = self.validateCardOnly
-        }
-        if self.dccEnable != "" {
-            parameters["DCC_ENABLE"] = self.dccEnable
-        }
+        parameters["MERCHANT_ID"] = self.merchantId
+        parameters["ACCOUNT"] = self.account
+        parameters["ORDER_ID"] = self.orderId
+        parameters["AMOUNT"] = self.amount
+        parameters["CURRENCY"] = self.currency
+        parameters["TIMESTAMP"] = self.timestamp
+        parameters["AUTO_SETTLE_FLAG"] = self.autoSettleFlag
+        parameters["COMMENT1"] = self.commentOne
+        parameters["COMMENT2"] = self.commentTwo
+        parameters["RETURN_TSS"] = self.returnTss
+        parameters["SHIPPING_CODE"] = self.shippingCode
+        parameters["SHIPPING_CO"] = self.shippingCountry
+        parameters["BILLING_CODE"] = self.billingCode
+        parameters["BILLING_CO"] = self.billingCountry
+        parameters["CUST_NUM"] = self.customerNumber
+        parameters["VAR_REF"] = self.variableReference
+        parameters["PROD_ID"] = self.productId
+        parameters["HPP_LANG"] = self.language
+        parameters["CARD_PAYMENT_BUTTON"] = self.cardPaymentButtonText
+        parameters["CARD_STORAGE_ENABLE"] = self.cardStorageEnable
+        parameters["OFFER_SAVE_CARD"] = self.offerSaveCard
+        parameters["PAYER_REF"] = self.payerReference
+        parameters["PMT_REF"] = self.paymentReference
+        parameters["PAYER_EXIST"] = self.payerExists
+        parameters["VALIDATE_CARD_ONLY"] = self.validateCardOnly
+        parameters["DCC_ENABLE"] = self.dccEnable
 
         if self.supplementaryData != [:] {
             for (key,value) in self.supplementaryData {
@@ -309,7 +256,9 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
             }
         }
 
-        return parameters.stringFromHttpParameters()
+        return parameters
+            .filter { !$0.value.isEmpty }
+            .stringFromHttpParameters()
     }
 
     /// Encoded whatever paramaters have been set and makes a network call to the HPP Request Producer to get the encoded request to sent to HPP.
@@ -329,7 +278,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
                 request.setValue($0.value, forHTTPHeaderField: $0.key)
             }
         }
-        request.httpBody = self.getParametersString().data(using: String.Encoding.utf8)
+        request.httpBody = getParametersString().data(using: String.Encoding.utf8)
 
         let dataTask = session.dataTask(with: request, completionHandler: { data, response, error in
 
@@ -363,7 +312,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
                                  timeoutInterval: 30.0)
 
         request.httpMethod = "POST"
-        request.httpBody = self.httpBodyWithJSON(self.HPPRequest)
+        request.httpBody = httpBodyWithJSON(self.HPPRequest)
         request.setValue(HPPHeader.Value.xWWWFormUrlEncoded, forHTTPHeaderField: HPPHeader.Field.contentType)
         request.setValue(HPPHeader.Value.text, forHTTPHeaderField: HPPHeader.Field.accept)
         if let additionalHeaders = additionalHeaders {
@@ -372,7 +321,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
             }
         }
 
-        self.hppViewController.loadRequest(request)
+        hppViewController.loadRequest(request)
     }
 
     /// Makes a network request to the HPP Response Consumer passing the responce from HPP.
@@ -393,10 +342,8 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
                 request.setValue($0.value, forHTTPHeaderField: $0.key)
             }
         }
-
-        let parameters = "hppResponse=" + hppResponse
-
-        request.httpBody = parameters.data(using: String.Encoding.utf8)
+        let body = ["hppResponse": hppResponse]
+        request.httpBody = body.stringFromHttpParameters().data(using: String.Encoding.utf8)
 
         let dataTask = session.dataTask(with: request, completionHandler: { data, response, error in
 
@@ -405,13 +352,13 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
                 do {
                     if let receivedData = data {
                         let decodedResponse = try JSONDecoder().decode(T.self, from: receivedData)
-                        if let dictResponse = decodedResponse as? [String: String] {
-                            self.delegate?.HPPManagerCompletedWithResult(dictResponse)
-                            self.genericDelegate?.HPPManagerCompletedWithResult(decodedResponse)
-                        } else {
+                        guard let dictResponse = decodedResponse as? [String: String] else {
                             let error = HPPManagerError.typeMismatch()
                             self.HPPViewControllerFailedWithError(error)
+                            return
                         }
+                        self.delegate?.HPPManagerCompletedWithResult(dictResponse)
+                        self.genericDelegate?.HPPManagerCompletedWithResult(decodedResponse)
                     } else {
                         self.HPPViewControllerFailedWithError(error)
                     }
@@ -428,21 +375,21 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
     /// The delegate callback made by the HPP View controller when the interaction with HPP completes successfully.
     /// - Parameter hppResponse: The response the webview received from HPP.
     func HPPViewControllerCompletedWithResult(_ hppResponse: String) {
-        self.decodeHPPResponse(hppResponse)
+        decodeHPPResponse(hppResponse)
     }
 
     /// The delegate callback made by the HPP View controller when the interaction with HPP fails with an error.
     /// - Parameter error: The error which occured.
     func HPPViewControllerFailedWithError(_ error: Error?) {
-        self.delegate?.HPPManagerFailedWithError(error)
-        self.genericDelegate?.HPPManagerFailedWithError(error)
-        self.hppViewController.dismiss(animated: true, completion: nil)
+        delegate?.HPPManagerFailedWithError(error)
+        genericDelegate?.HPPManagerFailedWithError(error)
+        hppViewController.dismiss(animated: true, completion: nil)
     }
 
     /// The delegate callback made by the HPP View controller when the user cancels the payment.
     func HPPViewControllerWillDismiss() {
-        self.delegate?.HPPManagerCancelled()
-        self.genericDelegate?.HPPManagerCancelled()
+        delegate?.HPPManagerCancelled()
+        genericDelegate?.HPPManagerCancelled()
     }
 }
 

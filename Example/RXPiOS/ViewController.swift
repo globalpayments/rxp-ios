@@ -3,17 +3,18 @@ import RXPiOS
 
 final class ViewController: UIViewController, HPPManagerDelegate {
 
-    @IBOutlet private weak var result_textView: UITextView!
+    @IBOutlet private weak var resultTextView: UITextView!
     @IBOutlet private weak var payButton: UIButton!
     @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.activityIndicator.isHidden = true
+        activityIndicator.isHidden = true
     }
 
-    @IBAction func payButtonAction(_ sender: AnyObject) {
+    @IBAction private func payButtonAction() {
+        setLoadingState()
 
         let hppManager = HPPManager()
         hppManager.isEncoded = false
@@ -24,8 +25,6 @@ final class ViewController: UIViewController, HPPManagerDelegate {
                                         "custom_header_2": "test param 2",
                                         "custom_header_3": "test param 3"]
         hppManager.delegate = self
-        setLoadingState()
-
         hppManager.presentViewInViewController(self)
     }
 
@@ -38,10 +37,8 @@ final class ViewController: UIViewController, HPPManagerDelegate {
 
     //MARK: - HPPManagerDelegate
 
-    func HPPManagerCompletedWithResult(_ result: Dictionary <String, String>) {
-        DispatchQueue.main.async() {
-            self.displayResult(result: NSString(format: "%@", result) as String)
-        }
+    func HPPManagerCompletedWithResult(_ result: [String: String]) {
+        displayResult(result: NSString(format: "%@", result) as String)
     }
 
     func HPPManagerFailedWithError(_ error: Error?) {
@@ -51,12 +48,11 @@ final class ViewController: UIViewController, HPPManagerDelegate {
     }
 
     func HPPManagerCancelled() {
-        self.displayResult(result: "Cancelled by User")
+        displayResult(result: "Cancelled by User")
     }
 
     func displayResult(result: String) {
-        self.result_textView.text = NSString(format: "%@", result) as String
-        self.result_textView.textAlignment = .left
+        self.resultTextView.text = result
         self.activityIndicator.stopAnimating()
         self.payButton.isEnabled = true
     }
