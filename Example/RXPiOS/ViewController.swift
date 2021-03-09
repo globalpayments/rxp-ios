@@ -44,7 +44,7 @@ final class ViewController: UIViewController, HPPManagerDelegate {
         }
     }
 
-    func HPPManagerFailedWithError(_ error: NSError?) {
+    func HPPManagerFailedWithError(_ error: Error?) {
         if let hppError = error {
             displayResult(result: hppError.localizedDescription)
         }

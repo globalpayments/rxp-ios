@@ -2,17 +2,17 @@ import UIKit
 import WebKit
 
 /// The delegate callbacks which allow the HPPManager to receive back the results from the WKWebView.
-@objc protocol HPPViewControllerDelegate {
-    @objc optional func HPPViewControllerWillDismiss()
-    @objc optional func HPPViewControllerCompletedWithResult(_ result: String)
-    @objc optional func HPPViewControllerFailedWithError(_ error: NSError?)
+@objc protocol HPPViewControllerDelegate: class {
+    @objc func HPPViewControllerWillDismiss()
+    @objc func HPPViewControllerCompletedWithResult(_ result: String)
+    @objc func HPPViewControllerFailedWithError(_ error: Error?)
 }
 
 /// The Web View Controller which encapsulates the management of the webivew and the interaction with the HPP web page.
 class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, WKScriptMessageHandler {
 
     var webView: WKWebView?
-    var delegate:HPPViewControllerDelegate?
+    var delegate: HPPViewControllerDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,13 +50,13 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
 
     /// Called if the user taps the cancel button.
     @objc func closeView() {
-        delegate?.HPPViewControllerWillDismiss!()
+        delegate?.HPPViewControllerWillDismiss()
         dismiss(animated: true, completion: nil)
     }
 
     /// Loads the network request and displays the result in the webview.
     /// - Parameter request: The network request to be loaded.
-    func loadRequest (_ request: URLRequest) {
+    func loadRequest(_ request: URLRequest) {
         let session = URLSession.shared
         let dataTask = session.dataTask(
             with: request,
@@ -65,10 +65,10 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
                 DispatchQueue.main.async {
                     UIApplication.shared.isNetworkActivityIndicatorVisible = false
                     if error != nil {
-                        self.delegate?.HPPViewControllerFailedWithError!(error as NSError?)
+                        self.delegate?.HPPViewControllerFailedWithError(error)
                         self.dismiss(animated: true, completion: nil)
                     } else if data?.count == 0 {
-                        self.delegate?.HPPViewControllerFailedWithError!(nil)
+                        self.delegate?.HPPViewControllerFailedWithError(nil)
                         self.dismiss(animated: true, completion: nil)
                     } else {
                         let htmlString = String(data: data!, encoding: String.Encoding.utf8)
@@ -100,7 +100,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
                  withError error: Error) {
 
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
-        delegate?.HPPViewControllerFailedWithError!(error as NSError?)
+        delegate?.HPPViewControllerFailedWithError(error)
     }
 
     /// Allow all requests to be loaded
@@ -126,9 +126,9 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
                                didReceive message: WKScriptMessage) {
 
         if let messageString = message.body as? String {
-            delegate?.HPPViewControllerCompletedWithResult!(messageString)
+            delegate?.HPPViewControllerCompletedWithResult(messageString)
         } else {
-            delegate?.HPPViewControllerFailedWithError!(nil)
+            delegate?.HPPViewControllerFailedWithError(nil)
         }
 
         dismiss(animated: true, completion: nil)

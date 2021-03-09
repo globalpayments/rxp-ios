@@ -1,10 +1,10 @@
 import UIKit
 
 /// The delegate callbacks which allow the host app to receive all possible results form the component.
-@objc public protocol HPPManagerDelegate {
-    @objc optional func HPPManagerCompletedWithResult(_ result: [String: String])
-    @objc optional func HPPManagerFailedWithError(_ error: NSError?)
-    @objc optional func HPPManagerCancelled()
+@objc public protocol HPPManagerDelegate: class {
+    @objc func HPPManagerCompletedWithResult(_ result: [String: String])
+    @objc func HPPManagerFailedWithError(_ error: Error?)
+    @objc func HPPManagerCancelled()
 }
 
 /// The delegate callbacks which allow the host app to receive all possible results from the component using a generic decodable type.
@@ -193,7 +193,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
     @objc public func presentViewInViewController(_ viewController: UIViewController) {
         guard let producerURL = HPPRequestProducerURL, !producerURL.absoluteString.isEmpty else {
             let error = HPPManagerError.missingProducerURL()
-            self.delegate?.HPPManagerFailedWithError!(error)
+            self.delegate?.HPPManagerFailedWithError(error)
             self.genericDelegate?.HPPManagerFailedWithError(error)
             return
         }
@@ -406,7 +406,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
                     if let receivedData = data {
                         let decodedResponse = try JSONDecoder().decode(T.self, from: receivedData)
                         if let dictResponse = decodedResponse as? [String: String] {
-                            self.delegate?.HPPManagerCompletedWithResult?(dictResponse)
+                            self.delegate?.HPPManagerCompletedWithResult(dictResponse)
                             self.genericDelegate?.HPPManagerCompletedWithResult(decodedResponse)
                         } else {
                             let error = HPPManagerError.typeMismatch()
@@ -428,20 +428,20 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
     /// The delegate callback made by the HPP View controller when the interaction with HPP completes successfully.
     /// - Parameter hppResponse: The response the webview received from HPP.
     func HPPViewControllerCompletedWithResult(_ hppResponse: String) {
-        self.decodeHPPResponse(hppResponse);
+        self.decodeHPPResponse(hppResponse)
     }
 
     /// The delegate callback made by the HPP View controller when the interaction with HPP fails with an error.
     /// - Parameter error: The error which occured.
-    private func HPPViewControllerFailedWithError(_ error: Error?) {
-        self.delegate?.HPPManagerFailedWithError!(error as NSError?)
+    func HPPViewControllerFailedWithError(_ error: Error?) {
+        self.delegate?.HPPManagerFailedWithError(error)
         self.genericDelegate?.HPPManagerFailedWithError(error)
         self.hppViewController.dismiss(animated: true, completion: nil)
     }
 
     /// The delegate callback made by the HPP View controller when the user cancels the payment.
     func HPPViewControllerWillDismiss() {
-        self.delegate?.HPPManagerCancelled!()
+        self.delegate?.HPPManagerCancelled()
         self.genericDelegate?.HPPManagerCancelled()
     }
 }
