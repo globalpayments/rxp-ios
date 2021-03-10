@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "RXPiOS"
-  s.version          = "1.6.0"
+  s.version          = "1.7.0"
   s.summary          = "The official Realex Payments iOS SDK for HPP and Remote API."
   s.homepage         = "https://developer.realexpayments.com"
   s.license          = 'MIT'
