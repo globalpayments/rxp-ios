@@ -1,7 +1,9 @@
 import UIKit
 import RXPiOS
 
-final class ViewController: UIViewController, HPPManagerDelegate {
+final class ViewController: UIViewController, HPPManagerDelegate, GenericHPPManagerDelegate {
+
+    typealias PaymentServiceResponse = HPPResponse
 
     @IBOutlet private weak var resultTextView: UITextView!
     @IBOutlet private weak var payButton: UIButton!
@@ -10,13 +12,20 @@ final class ViewController: UIViewController, HPPManagerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
     }
 
     @IBAction private func payButtonAction() {
         setLoadingState()
 
+        // Default implementation
         let hppManager = HPPManager()
+        hppManager.delegate = self
+
+        // Use in case of custom response
+//        let hppManager = GenericHPPManager<HPPResponse>()
+//        hppManager.setGenericDelegate(self)
+
         hppManager.isEncoded = false
         hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
         hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
@@ -24,36 +33,39 @@ final class ViewController: UIViewController, HPPManagerDelegate {
         hppManager.additionalHeaders = ["custom_header_1": "test param 1",
                                         "custom_header_2": "test param 2",
                                         "custom_header_3": "test param 3"]
-        hppManager.delegate = self
         hppManager.presentViewInViewController(self)
     }
 
     private func setLoadingState() {
-        activityIndicator.isHidden = false
         activityIndicator.startAnimating()
-        activityIndicator.hidesWhenStopped = true
         payButton.isEnabled = false
     }
 
-    //MARK: - HPPManagerDelegate
+    private func display(result: String) {
+        activityIndicator.stopAnimating()
+        resultTextView.text = result
+        payButton.isEnabled = true
+    }
 
+    // MARK: HPPManagerDelegate or GenericHPPManagerDelegate
+
+    // Is called in case of GenericHPPManager<HPPResponse>()
+    func HPPManagerCompletedWithResult(_ result: HPPResponse) {
+        display(result: result.description)
+    }
+
+    // Is called in case of regular HPPManager()
     func HPPManagerCompletedWithResult(_ result: [String: String]) {
-        displayResult(result: NSString(format: "%@", result) as String)
+        display(result: NSString(format: "%@", result) as String)
     }
 
     func HPPManagerFailedWithError(_ error: Error?) {
-        if let hppError = error {
-            displayResult(result: hppError.localizedDescription)
+        if let error = error {
+            display(result: error.localizedDescription)
         }
     }
 
     func HPPManagerCancelled() {
-        displayResult(result: "Cancelled by User")
-    }
-
-    func displayResult(result: String) {
-        self.resultTextView.text = result
-        self.activityIndicator.stopAnimating()
-        self.payButton.isEnabled = true
+        display(result: "Canceled by user")
     }
 }

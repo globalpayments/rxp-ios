@@ -210,7 +210,9 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
 
         var parameters = [String: String]()
         for (key, value) in json {
-            parameters[key as! String] = value as? String
+            if let key = key as? String, let value = value as? String {
+                parameters[key] = value
+            }
         }
         parameters["HPP_VERSION"] = "2"
         parameters["HPP_POST_RESPONSE"] = self.HPPRequestProducerURL.scheme! + "://" + self.HPPRequestProducerURL.host!
