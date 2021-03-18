@@ -74,11 +74,11 @@ hppManager.delegate = self
 
 ### Delegate Callbacks
 
-There are three possible outcomes from the HPP interaction
+There are three possible outcomes from the HPP interaction:
 
 1) It concluded successfully. This returns the decoded JSON from HPP, parsed as a native Dictionary of name / value pairs.
 
-2) It failed with an error. This returns an object of the NSError Class, you can access properties such as code and localizedDescription for more details on the error.
+2) It failed with an error. This returns an object of the Error Class, you can access properties such as code and localizedDescription for more details on the error.
 
 3) It was cancelled by the user.
 
@@ -106,6 +106,45 @@ On the server-side using one of our server SDKs, setup your Response Consumer to
 RealexHpp realexHpp = new RealexHpp("secret");
 HppResponse hppResponse = realexHpp.responseFromJson(responseJson);
 ```
+
+### Alternative Setup
+
+In case if your client-side code requires another type than `[String: String]` when receiving `HPPManagerCompletedWithResult` delegate, you need to set up the library differently
+
+1) Change `HPPManagerDelegate` into `GenericHPPManagerDelegate`
+
+2) Change `HPPManager()` into `GenericHPPManager<HPPResponse>()` where `HPPResponse` is a custom defined struct or class.
+
+3) Change function signature
+
+```
+from
+func HPPManagerCompletedWithResult(_ result: [String: String]) { ... }
+into
+func HPPManagerCompletedWithResult(_ result: HPPResponse) { ... }
+```
+
+Example:
+
+```
+final class ViewController: UIViewController, GenericHPPManagerDelegate { 
+
+func pay() {
+    let hppManager = GenericHPPManager<HPPResponse>()
+    hppManager.setGenericDelegate(self)
+    ...
+}
+
+func HPPManagerCompletedWithResult(_ result: HPPResponse) { ... }
+
+func HPPManagerFailedWithError(_ error: Error?) { ... }
+
+func HPPManagerCancelled() { ... }
+
+}
+```
+
+**Note**: By default, HPPManager is using `[Stirng: String]` type.
 
 ## FAQ
 
