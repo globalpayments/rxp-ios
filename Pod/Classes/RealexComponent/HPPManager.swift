@@ -352,13 +352,16 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
                 do {
                     if let receivedData = data {
                         let decodedResponse = try JSONDecoder().decode(T.self, from: receivedData)
+                        if let genericDelegate = self.genericDelegate {
+                            genericDelegate.HPPManagerCompletedWithResult(decodedResponse)
+                            return
+                        }
                         guard let dictResponse = decodedResponse as? [String: String] else {
                             let error = HPPManagerError.typeMismatch()
                             self.HPPViewControllerFailedWithError(error)
                             return
                         }
                         self.delegate?.HPPManagerCompletedWithResult(dictResponse)
-                        self.genericDelegate?.HPPManagerCompletedWithResult(decodedResponse)
                     } else {
                         self.HPPViewControllerFailedWithError(error)
                     }
