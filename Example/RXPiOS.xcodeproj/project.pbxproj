@@ -13,6 +13,7 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		822D118F26038B0A00BA7E8B /* HPPResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 822D118E26038B0A00BA7E8B /* HPPResponse.swift */; };
 		82611807246C126F0043B474 /* HPPManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82611806246C126F0043B474 /* HPPManagerTests.swift */; };
 		8261180B246C17D20043B474 /* URLSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82611809246C15C50043B474 /* URLSessionMock.swift */; };
 		A4F91BD0C6C85C04B6F245CA /* Pods_RXPiOS_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97C729E1379CD1BBC876ACED /* Pods_RXPiOS_Tests.framework */; };
@@ -48,6 +49,7 @@
 		607FACEB1AFB9204008FA782 /* Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests.swift; sourceTree = "<group>"; };
 		6FA1C65EC7DE73641B3E0F17 /* RXPiOS.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = RXPiOS.podspec; path = ../RXPiOS.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		7716D7BD2E5690DED2953CA3 /* Pods-RXPiOS_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RXPiOS_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-RXPiOS_Example/Pods-RXPiOS_Example.release.xcconfig"; sourceTree = "<group>"; };
+		822D118E26038B0A00BA7E8B /* HPPResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HPPResponse.swift; sourceTree = "<group>"; };
 		82611806246C126F0043B474 /* HPPManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HPPManagerTests.swift; sourceTree = "<group>"; };
 		82611809246C15C50043B474 /* URLSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionMock.swift; sourceTree = "<group>"; };
 		86F8034E5ADF876BA55456BE /* Pods-RXPiOS_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RXPiOS_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RXPiOS_Tests/Pods-RXPiOS_Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 		607FACD21AFB9204008FA782 /* Example for RXPiOS */ = {
 			isa = PBXGroup;
 			children = (
+				822D118D26038AF400BA7E8B /* Models */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
 				607FACD91AFB9204008FA782 /* Main.storyboard */,
@@ -154,6 +157,14 @@
 				97C729E1379CD1BBC876ACED /* Pods_RXPiOS_Tests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		822D118D26038AF400BA7E8B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				822D118E26038B0A00BA7E8B /* HPPResponse.swift */,
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 		82611808246C15BC0043B474 /* Mocks */ = {
@@ -224,18 +235,18 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0720;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = GlobalPayments;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = UJ7HNWGVVW;
-						LastSwiftMigration = 0820;
+						LastSwiftMigration = 1130;
 					};
 					607FACE41AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
 						DevelopmentTeam = UJ7HNWGVVW;
-						LastSwiftMigration = 0820;
+						LastSwiftMigration = 1130;
 						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
 				};
@@ -360,6 +371,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
+				822D118F26038B0A00BA7E8B /* HPPResponse.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -427,6 +439,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -483,6 +496,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -522,7 +536,7 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.RXPiOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -542,7 +556,7 @@
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.RXPiOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -561,7 +575,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RXPiOS_Example.app/RXPiOS_Example";
 			};
 			name = Debug;
@@ -580,7 +594,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RXPiOS_Example.app/RXPiOS_Example";
 			};
 			name = Release;

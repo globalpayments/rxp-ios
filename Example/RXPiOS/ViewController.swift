@@ -1,26 +1,31 @@
-//
-//  ViewController.swift
-//  RXPiOS
-//
-
 import UIKit
 import RXPiOS
 
-final class ViewController: UIViewController, HPPManagerDelegate {
+final class ViewController: UIViewController, HPPManagerDelegate, GenericHPPManagerDelegate {
 
-    @IBOutlet weak var result_textView: UITextView!
-    @IBOutlet weak var payButton: UIButton!
-    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    typealias PaymentServiceResponse = HPPResponse
+
+    @IBOutlet private weak var resultTextView: UITextView!
+    @IBOutlet private weak var payButton: UIButton!
+    @IBOutlet private weak var activityIndicator: UIActivityIndicatorView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.activityIndicator.isHidden = true
+        activityIndicator.stopAnimating()
     }
 
-    @IBAction func payButtonAction(_ sender: AnyObject) {
+    @IBAction private func payButtonAction() {
+        setLoadingState()
 
+        // Default implementation
         let hppManager = HPPManager()
+        hppManager.delegate = self
+
+        // Use in case of custom response
+//        let hppManager = GenericHPPManager<HPPResponse>()
+//        hppManager.setGenericDelegate(self)
+
         hppManager.isEncoded = false
         hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
         hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
@@ -28,38 +33,39 @@ final class ViewController: UIViewController, HPPManagerDelegate {
         hppManager.additionalHeaders = ["custom_header_1": "test param 1",
                                         "custom_header_2": "test param 2",
                                         "custom_header_3": "test param 3"]
-        hppManager.delegate = self
         hppManager.presentViewInViewController(self)
+    }
 
-        activityIndicator.isHidden = false
+    private func setLoadingState() {
         activityIndicator.startAnimating()
-        activityIndicator.hidesWhenStopped = true
         payButton.isEnabled = false
     }
 
-
-    //MARK: - HPPManagerDelegate
-
-    func HPPManagerCompletedWithResult(_ result: Dictionary <String, String>) {
-        DispatchQueue.main.async() {
-            self.displayResult(result: NSString(format: "%@", result) as String)
-        }
+    private func display(result: String) {
+        activityIndicator.stopAnimating()
+        resultTextView.text = result
+        payButton.isEnabled = true
     }
 
-    func HPPManagerFailedWithError(_ error: NSError?) {
-        if let hppError = error {
-            displayResult(result: hppError.localizedDescription)
+    // MARK: HPPManagerDelegate or GenericHPPManagerDelegate
+
+    // Is called in case of GenericHPPManager<HPPResponse>()
+    func HPPManagerCompletedWithResult(_ result: HPPResponse) {
+        display(result: result.description)
+    }
+
+    // Is called in case of regular HPPManager()
+    func HPPManagerCompletedWithResult(_ result: [String: String]) {
+        display(result: NSString(format: "%@", result) as String)
+    }
+
+    func HPPManagerFailedWithError(_ error: Error?) {
+        if let error = error {
+            display(result: error.localizedDescription)
         }
     }
 
     func HPPManagerCancelled() {
-        self.displayResult(result: "Cancelled by User")
-    }
-
-    func displayResult(result: String) {
-        self.result_textView.text = NSString(format: "%@", result) as String
-        self.result_textView.textAlignment = .left
-        self.activityIndicator.stopAnimating();
-        self.payButton.isEnabled = true;
+        display(result: "Canceled by user")
     }
 }

@@ -75,8 +75,10 @@ class rxp_iosTests: XCTestCase {
     
     func testValidateExpiryDateNotInPast() {
         XCTAssertFalse(RealexRemote.validateExpiryDateNotInPast(nil), "undefined date")
-        XCTAssertFalse(RealexRemote.validateExpiryDateNotInPast("0615"), "date in past")
-        
+        XCTAssertFalse(RealexRemote.validateExpiryDateNotInPast("0115"), "date in past")
+        XCTAssertFalse(RealexRemote.validateExpiryDateNotInPast("9999"), "incorrect date")
+        XCTAssertFalse(RealexRemote.validateExpiryDateNotInPast("TEST"), "incorrect date")
+
         let currentDate = Date()
         let calendar = Calendar.current
         let components = calendar.dateComponents([Calendar.Component.year, Calendar.Component.month], from: currentDate)

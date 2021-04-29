@@ -13,7 +13,7 @@ You can find more information on how to use this library and sign up for a free 
 1. To integrate the Realex Payments iOS Library into your Xcode project using CocoaPods, specify it in your podfile:
 
 ```
-pod 'RXPiOS', '~> 1.5.0'
+pod 'RXPiOS', '~> 1.7.0'
 ```
 
 2. Then, run the following command:
@@ -59,9 +59,9 @@ The HPP Manager requires three server URLs.
 3) **Response Consumer URL**: utilizing one of the Realex HPP server SDKs; takes the encoded response received back from HPP checks the validity of the hash and decodes the response.
 
 ```
-hppManager.HPPRequestProducerURL = NSURL(string: "https://myserver.com/hppRequestProducer")
-hppManager.HPPURL = NSURL(string: "https://pay.realexpayments.com/pay")
-hppManager.HPPResponseConsumerURL = NSURL(string: "https://myserver.com/hppResponseConsumer")
+hppManager.HPPRequestProducerURL = URL(string: "https://myserver.com/hppRequestProducer")
+hppManager.HPPURL = URL(string: "https://pay.realexpayments.com/pay")
+hppManager.HPPResponseConsumerURL = URL(string: "https://myserver.com/hppResponseConsumer")
 ```
 
 ### Set Delegate
@@ -74,19 +74,19 @@ hppManager.delegate = self
 
 ### Delegate Callbacks
 
-There are three possible outcomes from the HPP interaction
+There are three possible outcomes from the HPP interaction:
 
 1) It concluded successfully. This returns the decoded JSON from HPP, parsed as a native Dictionary of name / value pairs.
 
-2) It failed with an error. This returns an object of the NSError Class, you can access properties such as code and localizedDescription for more details on the error.
+2) It failed with an error. This returns an object of the Error Class, you can access properties such as code and localizedDescription for more details on the error.
 
 3) It was cancelled by the user.
 
 The HPP Manager's delegate should implement the following three functions to receive back the result from the HPP Manager:
 
 ```
-func HPPManagerCompletedWithResult(result: Dictionary <String, String>)
-func HPPManagerFailedWithError(error: NSError?)
+func HPPManagerCompletedWithResult(_ result: [String: String])
+func HPPManagerFailedWithError(_ error: Error?)
 func HPPManagerCancelled()
 ```
 
@@ -106,6 +106,45 @@ On the server-side using one of our server SDKs, setup your Response Consumer to
 RealexHpp realexHpp = new RealexHpp("secret");
 HppResponse hppResponse = realexHpp.responseFromJson(responseJson);
 ```
+
+### Alternative Setup
+
+In case if your client-side code requires another type than `[String: String]` when receiving `HPPManagerCompletedWithResult` delegate, you need to set up the library differently
+
+1) Change `HPPManagerDelegate` into `GenericHPPManagerDelegate`
+
+2) Change `HPPManager()` into `GenericHPPManager<HPPResponse>()` where `HPPResponse` is a custom defined struct or class.
+
+3) Change function signature
+
+```
+from
+func HPPManagerCompletedWithResult(_ result: [String: String]) { ... }
+into
+func HPPManagerCompletedWithResult(_ result: HPPResponse) { ... }
+```
+
+Example:
+
+```
+final class ViewController: UIViewController, GenericHPPManagerDelegate { 
+
+func pay() {
+    let hppManager = GenericHPPManager<HPPResponse>()
+    hppManager.setGenericDelegate(self)
+    ...
+}
+
+func HPPManagerCompletedWithResult(_ result: HPPResponse) { ... }
+
+func HPPManagerFailedWithError(_ error: Error?) { ... }
+
+func HPPManagerCancelled() { ... }
+
+}
+```
+
+**Note**: By default, HPPManager is using `[Stirng: String]` type.
 
 ## FAQ
 
@@ -129,12 +168,20 @@ hppManager.supplementaryData["UNKNOWN_1"] = "Unknown value 1"
 hppManager.supplementaryData["UNKNOWN_2"] = "Unknown value 2"
 ```
 
+Also, in addition to predefined header values, you can add any amount of additional values as follows:
+
+```
+hppManager.additionalHeaders = ["custom-header-1": "test param 1",
+                                "custom-header-2": "test param 2",
+                                "custom-header-3": "test param 3"]
+```
+
 ### Testing
 
 Realex Payments maintain separate endpoints for live and test transactions. You’ll need to override the HPP URL in the SDK to facilitate testing. Use the code below:
 
 ```
-hppManager.HPPURL = NSURL(string: "https://pay.sandbox.realexpayments.com/pay")
+hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
 ```
 
 ## License
