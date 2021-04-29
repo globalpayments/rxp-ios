@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "RXPiOS"
-  s.version          = "1.7.0"
+  s.version          = "1.7.1"
   s.summary          = "The official Realex Payments iOS SDK for HPP and Remote API."
   s.homepage         = "https://developer.realexpayments.com"
   s.license          = 'MIT'
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
     "Realex Payments" => "developers@realexpayments.com"
   }
 
-  s.source           = { :git => "https://github.com/realexpayments/rxp-ios.git", :tag => "1.6.0" }
+  s.source           = { :git => "https://github.com/realexpayments/rxp-ios.git", :tag => s.version.to_s }
   s.platform         = :ios, '9.0'
   s.requires_arc     = true
   s.swift_version    = '5.0'
