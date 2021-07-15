@@ -27,9 +27,9 @@ final class ViewController: UIViewController, HPPManagerDelegate, GenericHPPMana
 //        hppManager.setGenericDelegate(self)
 
         hppManager.isEncoded = false
-        hppManager.HPPRequestProducerURL = URL(string: "https://www.example.com/HppRequestProducer")
+        hppManager.HPPRequestProducerURL = URL(string: "https://rxp-hpp-ios.azurewebsites.net/hppRequestProducer.php")
         hppManager.HPPURL = URL(string: "https://pay.sandbox.realexpayments.com/pay")
-        hppManager.HPPResponseConsumerURL = URL(string: "https://www.example.com/HppResponseConsumer")
+        hppManager.HPPResponseConsumerURL = URL(string: "https://rxp-hpp-ios.azurewebsites.net/hppResponseConsumer-string.php")
         hppManager.additionalHeaders = ["custom_header_1": "test param 1",
                                         "custom_header_2": "test param 2",
                                         "custom_header_3": "test param 3"]
@@ -55,7 +55,7 @@ final class ViewController: UIViewController, HPPManagerDelegate, GenericHPPMana
     }
 
     // Is called in case of regular HPPManager()
-    func HPPManagerCompletedWithResult(_ result: [String: String]) {
+    func HPPManagerCompletedWithResult(_ result: [String: Any]) {
         display(result: NSString(format: "%@", result) as String)
     }
 
