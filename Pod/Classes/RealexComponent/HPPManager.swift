@@ -2,7 +2,7 @@ import UIKit
 
 /// The delegate callbacks which allow the host app to receive all possible results form the component.
 @objc public protocol HPPManagerDelegate: class {
-    @objc func HPPManagerCompletedWithResult(_ result: [String: String])
+    @objc func HPPManagerCompletedWithResult(_ result: [String: Any])
     @objc func HPPManagerFailedWithError(_ error: Error?)
     @objc func HPPManagerCancelled()
 }
@@ -44,7 +44,7 @@ fileprivate class AnyGenericHPPManagerDelegate<T: Decodable>: GenericHPPManagerD
 
 /// The main object the host app creates.
 /// A convenience payment manager for payment service responses that have a `[String: String]` structure
-public class HPPManager: GenericHPPManager<[String: String]> { }
+public class HPPManager: GenericHPPManager<[String: String?]> { }
 
 /// The main object the host app creates.
 /// A payment manager that can decode payment service responses that have a generic structure
@@ -353,17 +353,25 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
                 do {
                     if let receivedData = data {
-                        let decodedResponse = try JSONDecoder().decode(T.self, from: receivedData)
-                        if let genericDelegate = self.genericDelegate {
-                            genericDelegate.HPPManagerCompletedWithResult(decodedResponse)
-                            return
+                        if var jsonData = try JSONSerialization.jsonObject(with: receivedData, options: []) as? [String: Any]{
+                            switch jsonData["response"] {
+                            case is String, nil:
+                                self.decodeDataOnCompleted(receivedData)
+                                break
+                            case let response as [String:String]:
+                                jsonData["responseCode"] = response["code"]
+                                jsonData["responseMessage"] = response["message"]
+                                jsonData["response"] = nil
+                                self.decodeDataOnCompleted(jsonData: jsonData as? [String:String])
+                                break
+                            default:
+                                let error = HPPManagerError.typeMismatch()
+                                self.HPPViewControllerFailedWithError(error)
+                                break
+                            }
+                        }else{
+                            self.decodeDataOnCompleted(receivedData)
                         }
-                        guard let dictResponse = decodedResponse as? [String: String] else {
-                            let error = HPPManagerError.typeMismatch()
-                            self.HPPViewControllerFailedWithError(error)
-                            return
-                        }
-                        self.delegate?.HPPManagerCompletedWithResult(dictResponse)
                     } else {
                         self.HPPViewControllerFailedWithError(error)
                     }
@@ -373,6 +381,32 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
             }
         })
         dataTask.resume()
+    }
+    
+    private func decodeDataOnCompleted(_ receivedData: Data? = nil, jsonData: [String: String]? = nil ){
+        do {
+            if let data = receivedData {
+                let decodedResponse = try JSONDecoder().decode(T.self, from: data)
+                if let genericDelegate = self.genericDelegate {
+                    genericDelegate.HPPManagerCompletedWithResult(decodedResponse)
+                    return
+                }
+                guard let dictResponse = decodedResponse as? [String: Any] else {
+                    let error = HPPManagerError.typeMismatch()
+                    self.HPPViewControllerFailedWithError(error)
+                    return
+                }
+                self.delegate?.HPPManagerCompletedWithResult(dictResponse)
+            }
+            
+            if let data = jsonData{
+                self.delegate?.HPPManagerCompletedWithResult(data)
+                print(data)
+            }
+            
+        } catch {
+            self.HPPViewControllerFailedWithError(error)
+        }
     }
 
     // MARK: - HPPViewControllerDelegate

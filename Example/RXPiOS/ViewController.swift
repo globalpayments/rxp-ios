@@ -55,7 +55,7 @@ final class ViewController: UIViewController, HPPManagerDelegate, GenericHPPMana
     }
 
     // Is called in case of regular HPPManager()
-    func HPPManagerCompletedWithResult(_ result: [String: String]) {
+    func HPPManagerCompletedWithResult(_ result: [String: Any]) {
         display(result: NSString(format: "%@", result) as String)
     }
 
