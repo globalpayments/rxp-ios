@@ -159,6 +159,9 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
 
     /// Used to add additional headers and attach them to request
     @objc public var additionalHeaders: [String: String]?
+    
+    /// Used to add additional parameters and attach them to request
+    @objc public var additionalParameters: [String: String]?
 
     /// The HPPManager's delegate to receive the result of the interaction.
     @objc public weak var delegate: HPPManagerDelegate?
@@ -207,8 +210,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
     /// - Parameter json: The dictionary of paramaters and values to be encoded.
     /// - Returns: The data encoded HTML string representation of the paramaters and values.
     private func httpBodyWithJSON(_ json: NSDictionary) -> Data {
-
-        var parameters = [String: String]()
+        var parameters = self.additionalParameters ?? [:]
         for (key, value) in json {
             if let key = key as? String, let value = value as? String {
                 parameters[key] = value
@@ -216,6 +218,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
         }
         parameters["HPP_VERSION"] = "2"
         parameters["HPP_POST_RESPONSE"] = self.HPPRequestProducerURL.scheme! + "://" + self.HPPRequestProducerURL.host!
+       
 
         let parameterString = parameters.stringFromHttpParameters()
         return parameterString.data(using: String.Encoding.utf8)!
@@ -257,6 +260,8 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
                 parameters.updateValue(value, forKey:key)
             }
         }
+        
+        self.additionalParameters = parameters
 
         return parameters
             .filter { !$0.value.isEmpty }
