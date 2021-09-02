@@ -159,6 +159,9 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
 
     /// Used to add additional headers and attach them to request
     @objc public var additionalHeaders: [String: String]?
+    
+    /// Used to add parameters and attach them to request
+    @objc public var parameters = [String: String]()
 
     /// The HPPManager's delegate to receive the result of the interaction.
     @objc public weak var delegate: HPPManagerDelegate?
@@ -207,8 +210,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
     /// - Parameter json: The dictionary of paramaters and values to be encoded.
     /// - Returns: The data encoded HTML string representation of the paramaters and values.
     private func httpBodyWithJSON(_ json: NSDictionary) -> Data {
-
-        var parameters = [String: String]()
+        var parameters = self.parameters
         for (key, value) in json {
             if let key = key as? String, let value = value as? String {
                 parameters[key] = value
@@ -216,6 +218,7 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
         }
         parameters["HPP_VERSION"] = "2"
         parameters["HPP_POST_RESPONSE"] = self.HPPRequestProducerURL.scheme! + "://" + self.HPPRequestProducerURL.host!
+       
 
         let parameterString = parameters.stringFromHttpParameters()
         return parameterString.data(using: String.Encoding.utf8)!
@@ -224,41 +227,40 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
     /// Returns the paramaters which have been set on HPPManager as HTML string.
     /// - Returns: The HTML string representation of the HPP paramaters which have been set.
     private func getParametersString() -> String {
-        var parameters = [String: String]()
-        parameters["MERCHANT_ID"] = self.merchantId
-        parameters["ACCOUNT"] = self.account
-        parameters["ORDER_ID"] = self.orderId
-        parameters["AMOUNT"] = self.amount
-        parameters["CURRENCY"] = self.currency
-        parameters["TIMESTAMP"] = self.timestamp
-        parameters["AUTO_SETTLE_FLAG"] = self.autoSettleFlag
-        parameters["COMMENT1"] = self.commentOne
-        parameters["COMMENT2"] = self.commentTwo
-        parameters["RETURN_TSS"] = self.returnTss
-        parameters["SHIPPING_CODE"] = self.shippingCode
-        parameters["SHIPPING_CO"] = self.shippingCountry
-        parameters["BILLING_CODE"] = self.billingCode
-        parameters["BILLING_CO"] = self.billingCountry
-        parameters["CUST_NUM"] = self.customerNumber
-        parameters["VAR_REF"] = self.variableReference
-        parameters["PROD_ID"] = self.productId
-        parameters["HPP_LANG"] = self.language
-        parameters["CARD_PAYMENT_BUTTON"] = self.cardPaymentButtonText
-        parameters["CARD_STORAGE_ENABLE"] = self.cardStorageEnable
-        parameters["OFFER_SAVE_CARD"] = self.offerSaveCard
-        parameters["PAYER_REF"] = self.payerReference
-        parameters["PMT_REF"] = self.paymentReference
-        parameters["PAYER_EXIST"] = self.payerExists
-        parameters["VALIDATE_CARD_ONLY"] = self.validateCardOnly
-        parameters["DCC_ENABLE"] = self.dccEnable
+        self.parameters["MERCHANT_ID"] = self.merchantId
+        self.parameters["ACCOUNT"] = self.account
+        self.parameters["ORDER_ID"] = self.orderId
+        self.parameters["AMOUNT"] = self.amount
+        self.parameters["CURRENCY"] = self.currency
+        self.parameters["TIMESTAMP"] = self.timestamp
+        self.parameters["AUTO_SETTLE_FLAG"] = self.autoSettleFlag
+        self.parameters["COMMENT1"] = self.commentOne
+        self.parameters["COMMENT2"] = self.commentTwo
+        self.parameters["RETURN_TSS"] = self.returnTss
+        self.parameters["SHIPPING_CODE"] = self.shippingCode
+        self.parameters["SHIPPING_CO"] = self.shippingCountry
+        self.parameters["BILLING_CODE"] = self.billingCode
+        self.parameters["BILLING_CO"] = self.billingCountry
+        self.parameters["CUST_NUM"] = self.customerNumber
+        self.parameters["VAR_REF"] = self.variableReference
+        self.parameters["PROD_ID"] = self.productId
+        self.parameters["HPP_LANG"] = self.language
+        self.parameters["CARD_PAYMENT_BUTTON"] = self.cardPaymentButtonText
+        self.parameters["CARD_STORAGE_ENABLE"] = self.cardStorageEnable
+        self.parameters["OFFER_SAVE_CARD"] = self.offerSaveCard
+        self.parameters["PAYER_REF"] = self.payerReference
+        self.parameters["PMT_REF"] = self.paymentReference
+        self.parameters["PAYER_EXIST"] = self.payerExists
+        self.parameters["VALIDATE_CARD_ONLY"] = self.validateCardOnly
+        self.parameters["DCC_ENABLE"] = self.dccEnable
 
         if self.supplementaryData != [:] {
             for (key,value) in self.supplementaryData {
-                parameters.updateValue(value, forKey:key)
+                self.parameters.updateValue(value, forKey:key)
             }
         }
 
-        return parameters
+        return self.parameters
             .filter { !$0.value.isEmpty }
             .stringFromHttpParameters()
     }

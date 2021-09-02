@@ -33,6 +33,8 @@ final class ViewController: UIViewController, HPPManagerDelegate, GenericHPPMana
         hppManager.additionalHeaders = ["custom_header_1": "test param 1",
                                         "custom_header_2": "test param 2",
                                         "custom_header_3": "test param 3"]
+        
+        hppManager.cardPaymentButtonText = "new pay"
         hppManager.presentViewInViewController(self)
     }
 
