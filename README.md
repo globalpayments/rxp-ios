@@ -28,7 +28,7 @@ $ pod install
 
 ```
 dependencies: [
-    .package(url: "https://github.com/wolfej94/rxp-ios", branch: "master")
+    .package(url: "https://github.com/globalpayments/rxp-ios", branch: "master")
 ]
 ```
 
