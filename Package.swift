@@ -7,7 +7,7 @@ import PackageDescription
 
 let package = Package(
     name: "RXPiOS",
-    platforms: [.iOS(.v13)],
+    platforms: [.iOS(.v9)],
     products: [
         .library(
             name: "RXPiOS",
