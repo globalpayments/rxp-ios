@@ -22,6 +22,16 @@ pod 'RXPiOS', '~> 1.7.0'
 $ pod install
 ```
 
+### Swift Package Manager
+
+1. To integrate the Realex Payments iOS Library into your Xcode project using Swift Package Manager, add it as a dependency in your Package.swift file:
+
+```
+dependencies: [
+    .package(url: "https://github.com/wolfej94/rxp-ios", branch: "master")
+]
+```
+
 ### Manual
 
 If you prefer not to use a dependency manager, you can integrate the Realex Payments iOS Library into your project manually.
