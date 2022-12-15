@@ -11,7 +11,7 @@ import UIKit
 import SwiftUI
 
 
-
+@available(iOS 13, *)
 public struct HPPView: UIViewControllerRepresentable {
     
     var manager: Binding<HPPManager>
