@@ -202,8 +202,20 @@ public class GenericHPPManager<T: Decodable>: NSObject, HPPViewControllerDelegat
         }
         getHPPRequest()
         let navigationController = UINavigationController(rootViewController: self.hppViewController)
-        navigationController.modalPresentationStyle = .fullScreen
+        navigationController.modalPresentationStyle = .pageSheet
         viewController.present(navigationController, animated: true, completion: nil)
+    }
+
+
+    public func viewController() -> HPPViewController { 
+        guard let producerURL = HPPRequestProducerURL, !producerURL.absoluteString.isEmpty else {
+            let error = HPPManagerError.missingProducerURL()
+            self.delegate?.HPPManagerFailedWithError(error)
+            self.genericDelegate?.HPPManagerFailedWithError(error)
+            return hppViewController
+        }
+        getHPPRequest()
+        return self.hppViewController
     }
 
     /// Converts a dictionay of string pairs into a html string reporesentation and encoded that as date for attaching to the request.

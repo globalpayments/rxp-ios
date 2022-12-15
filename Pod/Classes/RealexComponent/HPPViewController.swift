@@ -9,12 +9,12 @@ import WebKit
 }
 
 /// The Web View Controller which encapsulates the management of the webivew and the interaction with the HPP web page.
-class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, WKScriptMessageHandler {
+public class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, WKScriptMessageHandler {
     
     var webView: WKWebView?
     var delegate: HPPViewControllerDelegate?
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         
         initialiseWebView()
@@ -77,26 +77,26 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     
     // MARK: - WKWebView Delegate Callbacks
     
-    func webView(_ webView: WKWebView,
+    public func webView(_ webView: WKWebView,
                  didStartProvisionalNavigation navigation: WKNavigation) {
 
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
     }
     
-    func webView(_ webView: WKWebView,
+    public func webView(_ webView: WKWebView,
                  didFinish navigation: WKNavigation) {
 
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
     }
     
-    func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
+    public func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         
         UIApplication.shared.isNetworkActivityIndicatorVisible = false
         delegate?.HPPViewControllerFailedWithError(error)
     }
     
     /// Allow all requests to be loaded
-    func webView(_ webView: WKWebView,
+    public func webView(_ webView: WKWebView,
                  decidePolicyFor navigationResponse: WKNavigationResponse,
                  decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void) {
         
@@ -104,7 +104,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     }
     
     /// Allow all navigation actions
-    func webView(_ webView: WKWebView,
+    public func webView(_ webView: WKWebView,
                  decidePolicyFor navigationAction: WKNavigationAction,
                  decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         
@@ -114,7 +114,7 @@ class HPPViewController: UIViewController, WKNavigationDelegate,  WKUIDelegate, 
     // MARK: - Javascript Message Callback
     
     /// Delegate callback which receives any massages from the Javascript bridge
-    func userContentController(_ userContentController: WKUserContentController,
+    public func userContentController(_ userContentController: WKUserContentController,
                                didReceive message: WKScriptMessage) {
         
         if let messageString = message.body as? String {
