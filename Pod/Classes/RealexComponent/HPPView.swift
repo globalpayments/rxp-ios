@@ -16,6 +16,10 @@ public struct HPPView: UIViewControllerRepresentable {
     
     var manager: Binding<HPPManager>
     
+    public init(manager: Binding<HPPManager>) {
+        self.manager = manager
+    }
+    
     public func makeCoordinator() -> Coordinator {
         Coordinator(manager: manager)
     }
